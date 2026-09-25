@@ -1,0 +1,72 @@
+@media (min-width: 861px) and (max-width: 1200px) {
+  .quick-title { display: none; }
+  .quick-jump-btn { font-size: 11px; padding: 7px 9px; }
+}
+/* This breakpoint is shared with src/ui/dom.js. */
+@media (max-width: 860px) {
+  body { height: var(--viewport-height, 100dvh); overflow: hidden; }
+  .page { padding: max(8px, env(safe-area-inset-top)) 8px env(safe-area-inset-bottom); gap: 8px; }
+  .site-header { min-height: 60px; padding: 7px 10px; gap: 8px; }
+  .brand-wrap { flex: 1; gap: 8px; }
+  .seal-badge { width: 34px; height: 34px; font-size: 15px; }
+  .brand-info h1 { gap: 3px; white-space: nowrap; font-size: clamp(12px, 3.6vw, 15px); }
+  .brand-title-desktop, .brand-flower, .tagline > span:first-child, .btn-text { display: none; }
+  .brand-title-mobile { display: inline; }
+  .tagline { flex-wrap: nowrap; gap: 0; margin-top: 2px; white-space: nowrap; }
+  .pill { padding: 2px 6px; font-size: 9px; }
+  .header-actions { gap: 6px; }
+  .header-btn { width: 44px; height: 44px; padding: 0; justify-content: center; font-size: 15px; }
+  .app-main { grid-template-columns: minmax(0, 1fr); gap: 0; overflow: hidden; }
+  .map-stage { height: 100%; }
+  .area-quick-bar { top: 10px; left: 10px; padding: 4px; max-width: calc(100% - 72px); }
+  .quick-title { display: none; }
+  .quick-jump-btn { min-height: 40px; }
+  .map-controls { top: 10px; right: 10px; }
+  .map-hint-pill { display: none; }
+  .sidebar { position: absolute; z-index: 800; inset: auto 0 0; height: min(calc(var(--viewport-height, 100dvh) * .84), calc(100% - 8px)); border-radius: 22px 22px 0 0; border-bottom: 0; box-shadow: 0 -4px 20px rgb(60 30 20 / 10%); transform: translateY(calc(100% - 124px)); transition: transform .25s ease; }
+  .sidebar.sheet-expanded { transform: translateY(0); }
+  .detail-open .sidebar { visibility: hidden; }
+  .drawer-handle-bar { display: flex; align-items: center; flex-direction: column; justify-content: center; gap: 6px; width: 100%; min-height: 40px; padding: 8px 0; flex: none; touch-action: none; }
+  .drawer-pill { width: 40px; height: 4px; background: #dccbb7; border-radius: 999px; }
+  .drawer-status-hint { color: var(--cssa-red); font-size: 11px; font-weight: 650; }
+  .sidebar-header { padding: 6px 12px 12px; }
+  .search-bar { min-height: 44px; padding: 8px 10px; }
+  .filter-toggle { display: block; flex: 0 0 52px; min-height: 44px; padding: 6px; border: 1px solid var(--border-warm); border-radius: 12px; background: #fff; font-size: 12px; font-weight: 650; }
+  .filter-toggle[aria-expanded="true"] { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); }
+  .sidebar-body { display: block; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #dccbb7 transparent; }
+  .filter-panel { display: none; }
+  .filters-open .filter-panel { display: block; }
+  .filter-section { padding: 10px 12px; }
+  .chip-scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+  .filter-chip { min-height: 40px; }
+  .partner-scroll { overflow: visible; padding: 0 12px 24px; }
+  .list-meta { padding: 12px; }
+  .detail-card { position: fixed; inset: auto 0 0; width: 100%; max-width: 600px; max-height: min(calc(var(--viewport-height, 100dvh) * .86), 680px); margin: 0 auto; border-radius: 24px 24px 0 0; border-bottom: 0; box-shadow: 0 -8px 40px rgb(36 40 48 / 20%); }
+  .detail-header { padding: 16px; }
+  .detail-name { font-size: 20px; }
+  .detail-actions-row { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .app-toast { top: 84px; bottom: auto; }
+}
+@media (max-width: 360px) {
+  .site-header { padding: 6px 8px; gap: 6px; }
+  .brand-wrap { gap: 6px; }
+  .brand-info h1 { font-size: 12px; }
+  .header-actions { gap: 4px; }
+  .filter-chip { padding-inline: 8px; font-size: 11px; }
+  .list-meta { gap: 6px; font-size: 11px; }
+  .list-caption { font-size: 9px; }
+  .partner-card { padding: 10px; column-gap: 8px; }
+  .detail-header { gap: 8px; padding: 12px; }
+  .detail-name { font-size: 18px; }
+  .detail-body { padding: 12px; }
+  .detail-actions-row { padding-inline: 12px; }
+  .landmark-badge.major { padding: 5px 8px; font-size: 12px; }
+}
+@media (max-width: 860px) and (max-height: 480px) {
+  .tagline { display: none; }
+  .site-header { min-height: 48px; padding-block: 2px; }
+  .sidebar { height: calc(100% - 4px); }
+  .detail-card { max-height: calc(var(--viewport-height, 100dvh) - 12px); }
+  .detail-header { padding: 8px 12px; }
+  .detail-actions-row { padding-top: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+}

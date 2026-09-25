@@ -1,0 +1,15 @@
+.page { max-width: 1560px; height: var(--viewport-height, 100dvh); margin: 0 auto; padding: 14px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex: none; padding: 14px 20px; background: var(--paper); border: 1px solid var(--border-warm); border-radius: 18px; box-shadow: var(--shadow-sm); }
+.brand-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.seal-badge { position: relative; display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 2px solid #fff; border-radius: 12px 14px 11px 15px; background: var(--cssa-red); color: #fff; font-size: 19px; font-weight: 900; transform: rotate(-3deg); box-shadow: 2px 3px 0 rgb(159 22 27 / 20%); }
+.seal-badge::after { content: "UBC"; position: absolute; bottom: -6px; right: -6px; padding: 1px 4px; border: 1px solid #fff; border-radius: 4px; background: var(--ubc-blue); color: #fff; font-size: 8px; letter-spacing: .5px; }
+.brand-info { min-width: 0; }
+.brand-info h1 { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--cssa-red-dark); font-size: 19px; font-weight: 750; }
+.brand-title-mobile { display: none; }
+.tagline { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.pill { padding: 3px 8px; border: 1px solid #efa843; border-radius: 999px; background: var(--gold-light); color: var(--gold-dark); font-size: 11px; font-weight: 700; }
+.header-actions { display: flex; gap: 10px; flex: none; }
+.header-btn { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 9px 14px; border: 1px solid var(--cssa-red); border-radius: 999px; color: var(--cssa-red); font-size: 13px; font-weight: 700; }
+.header-btn.primary { background: var(--cssa-red); color: #fff; }
+.header-btn:hover { background: var(--cssa-red-dark); color: #fff; }
+.app-main { position: relative; display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; flex: 1; min-height: 0; }

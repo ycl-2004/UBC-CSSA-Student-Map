@@ -1,0 +1,48 @@
+.map-stage { position: relative; min-width: 0; min-height: 0; border: 1px solid var(--border-warm); border-radius: 20px; overflow: hidden; background: var(--sea); }
+#leafletMap { width: 100%; height: 100%; z-index: 1; background: var(--sea); }
+.leaflet-tile-pane { filter: saturate(1.45) brightness(1.04); }
+#leafletMap::after { content: ""; position: absolute; inset: 0; z-index: 350; pointer-events: none; background: linear-gradient(130deg, rgb(255 225 212 / 18%), rgb(215 241 233 / 14%) 52%, rgb(230 222 249 / 16%)); }
+.area-quick-bar { position: absolute; z-index: 500; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 88px); padding: 6px; border: 1px solid var(--border-warm); border-radius: 15px; background: rgb(255 253 248 / 96%); box-shadow: var(--shadow-sm); overflow-x: auto; scrollbar-width: thin; }
+.quick-title { padding: 0 6px; flex: none; font-size: 12px; font-weight: 700; color: var(--cssa-red-dark); }
+.quick-jump-btn { flex: none; min-height: 36px; padding: 7px 10px; border: 1px solid var(--border-warm); border-radius: 999px; background: #fff; color: var(--ink-soft); white-space: nowrap; font-size: 12px; font-weight: 650; }
+.quick-jump-btn:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); }
+.quick-jump-btn.ubc-pill { background: var(--ubc-blue-light); color: var(--ubc-blue); border-color: #bed0e6; }
+.map-controls { position: absolute; z-index: 500; top: 16px; right: 12px; display: flex; flex-direction: column; gap: 6px; }
+.ctrl-btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border-warm); border-radius: 12px; background: var(--paper); font-size: 20px; font-weight: 700; box-shadow: var(--shadow-sm); }
+.ctrl-btn:hover { background: var(--cssa-red-light); color: var(--cssa-red); }
+.custom-leaflet-marker { background: transparent !important; border: 0 !important; }
+.merchant-sticker-pin { position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer; transition: transform .16s; }
+.merchant-sticker-pin:hover { transform: translate(-50%, -100%) scale(1.08); }
+.pin-bubble { display: grid; place-items: center; padding: 3px; border: 3px solid #fff; border-radius: 50%; background: #fff; box-shadow: 0 3px 10px rgb(47 48 58 / 22%); }
+.pin-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; background: #fff; }
+.category-food .pin-icon { background: #fff0eb; }
+.category-drink .pin-icon { background: #e5f5ef; }
+.category-fun .pin-icon { background: #efedff; }
+.category-life .pin-icon { background: #fff4dc; }
+.merchant-sticker-pin.active .pin-bubble { border-color: var(--cssa-red); box-shadow: 0 0 0 4px rgb(216 38 44 / 20%), 0 6px 14px rgb(47 48 58 / 20%); }
+.pin-tail { width: 0; height: 0; margin-top: -1px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #fff; }
+.merchant-sticker-pin.active .pin-tail { border-top-color: var(--cssa-red); }
+.pin-caption { display: none; max-width: 170px; margin-top: 3px; padding: 3px 8px; border: 1px solid var(--border-warm); border-radius: 8px; background: rgb(255 255 255 / 96%); font-size: 12px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: var(--shadow-sm); pointer-events: none; }
+.merchant-sticker-pin.active .pin-caption, .merchant-sticker-pin.show-label .pin-caption { display: block; }
+.merchant-sticker-pin.active .pin-caption { background: var(--cssa-red); color: #fff; }
+.pin-sparkle { display: none; }
+.merchant-cluster { display: grid; place-items: center; width: 44px; height: 44px; border: 3px solid #fff; border-radius: 50% 50% 50% 16px; background: var(--cluster-color, var(--cssa-red)); color: #fff; font-size: 15px; font-weight: 800; box-shadow: 0 3px 10px rgb(47 48 58 / 22%); transform: rotate(-8deg); }
+.merchant-cluster span { transform: rotate(8deg); }
+.landmark-badge { display: inline-block; padding: 5px 10px; border: 1px solid #fff; border-radius: 10px 13px 10px 12px; background: #fff; color: #433b42; font-size: 13px; font-weight: 750; white-space: nowrap; transform: translate(-50%, -50%); pointer-events: none; box-shadow: var(--shadow-sm); }
+.landmark-badge.major { padding: 7px 12px; border-width: 2px; font-size: 15px; }
+.landmark-badge.vancouver { background: #ffede6; border-color: #f5c7b5; color: #915146; }
+.landmark-badge.richmond { background: #fff4db; border-color: #efd596; color: #82602b; }
+.landmark-badge.burnaby { background: #f0edff; border-color: #d7cef2; color: #5f568e; }
+.landmark-badge.ubc { background: #e5f5ef; border-color: #b9dfd2; color: #397563; }
+.landmark-badge.airport { background: #e9f1fd; border-color: #bfd2ed; color: #476488; }
+.landmark-badge.local { padding: 4px 8px; font-size: 12px; background: rgb(255 255 255 / 94%); border-color: var(--border-warm); }
+.map-hint-pill { position: absolute; z-index: 500; left: 16px; bottom: 24px; display: flex; align-items: center; gap: 9px; padding: 8px 12px; border: 1px solid var(--border-warm); border-radius: 12px; background: rgb(255 255 255 / 96%); color: var(--ink-soft); font-size: 12px; }
+.map-legend-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.map-legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+.map-legend-dot.food { background: var(--pin-food); }
+.map-legend-dot.drink { background: var(--pin-drink); }
+.map-legend-dot.fun { background: var(--pin-fun); }
+.map-legend-dot.life { background: var(--pin-life); }
+.leaflet-control-zoom { display: none; }
+.leaflet-control-attribution { font-size: 9px !important; color: #514e5a !important; background: rgb(255 255 255 / 90%) !important; }
+.map-unavailable { position: absolute; inset: 35% 20px auto; z-index: 550; padding: 20px; border-radius: 16px; background: var(--paper); font-size: 14px; line-height: 1.6; }

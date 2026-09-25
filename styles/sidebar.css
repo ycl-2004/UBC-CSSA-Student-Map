@@ -1,0 +1,37 @@
+.sidebar { display: flex; flex-direction: column; min-height: 0; background: var(--paper); border: 1px solid var(--border-warm); border-radius: 20px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.drawer-handle-bar, .filter-toggle { display: none; }
+.sidebar-header { display: flex; gap: 8px; flex: none; padding: 16px 18px 12px; border-bottom: 1px dashed var(--border-warm); }
+.search-bar { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; min-height: 46px; padding: 8px 12px; background: #fff; border: 1px solid var(--border-warm); border-radius: 13px; }
+.search-icon { color: var(--cssa-red); font-size: 18px; }
+.search-bar input { width: 100%; min-width: 0; border: 0; outline: none; color: var(--ink); background: transparent; font-size: 16px; }
+.search-bar:focus-within { outline: 2px solid #5292c9; outline-offset: 2px; }
+.search-bar input::placeholder { color: var(--muted); }
+.sidebar-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.filter-panel { flex: none; background: var(--paper-cream); }
+.filter-section { padding: 12px 18px; border-bottom: 1px dashed var(--border-warm); }
+.filter-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; color: var(--muted); font-size: 12px; font-weight: 650; }
+.filter-status { color: var(--cssa-red); font-size: 11px; }
+.filter-caption { font-size: 11px; }
+.chip-scroll { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-chip { flex: 0 0 auto; white-space: nowrap; min-height: 34px; padding: 7px 10px; background: #fff; border: 1px solid var(--border-warm); border-radius: 12px; font-size: 12px; font-weight: 650; }
+.filter-chip:hover { border-color: var(--cssa-red); }
+.filter-chip[aria-pressed="true"] { border-color: var(--cssa-red-dark); background: var(--cssa-red); color: #fff; }
+.list-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex: none; padding: 12px 18px; font-size: 12px; color: var(--muted); }
+.list-meta strong { color: var(--cssa-red-dark); font-size: 14px; }
+.list-caption { font-size: 10px; white-space: nowrap; }
+.partner-scroll { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; padding: 8px 12px 16px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #dccbb7 transparent; }
+.partner-card { display: grid; grid-template-columns: 42px minmax(0, 1fr); grid-template-rows: auto auto; align-content: start; gap: 8px 10px; flex: none; padding: 12px; border: 1px solid var(--border-warm); border-radius: 15px; background: #fff; cursor: pointer; }
+.partner-card:hover { border-color: #d2baa1; }
+.partner-card.active { border-color: var(--cssa-red); background: #fff8f8; }
+.card-icon { display: grid; place-items: center; grid-column: 1; grid-row: 1 / 3; align-self: start; width: 42px; height: 42px; border: 1px solid; border-radius: 14px; font-size: 21px; }
+.partner-card[data-category="food"] .card-icon { background: #fff0eb; border-color: #f1c4b8; }
+.partner-card[data-category="drink"] .card-icon { background: #e8f5f1; border-color: #c5e4da; }
+.partner-card[data-category="fun"] .card-icon { background: #f0edff; border-color: #d7d0f4; }
+.partner-card[data-category="life"] .card-icon { background: #fff4dc; border-color: #efddb0; }
+.card-info { grid-column: 2; min-width: 0; }
+.card-info .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 700; line-height: 1.3; }
+.card-info .sub { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 4px; font-size: 12px; line-height: 1.25; color: var(--muted); }
+.badge-area { padding: 2px 6px; border-radius: 5px; background: #f1ebd9; color: #6d5b51; font-size: 11px; font-weight: 600; }
+.card-perk { grid-column: 2; justify-self: start; min-width: 0; max-width: 100%; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; padding: 5px 9px; border: 1px solid #edca78; border-radius: 10px; background: var(--gold-light); color: var(--gold-dark); font-size: 12px; font-weight: 700; line-height: 1.4; }
+.empty-state { margin: 8px; padding: 20px 12px; border: 1px dashed var(--border-warm); border-radius: 16px; background: #fffaf4; text-align: center; font-size: 14px; line-height: 1.5; }
+.empty-state button { min-height: 44px; padding: 8px 12px; border-radius: 999px; background: var(--cssa-red); color: #fff; }
