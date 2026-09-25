@@ -88,8 +88,8 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove("show"), 4000);
   }
-  byId("btnHowToCard").addEventListener("click", () => showToast("UBC CSSA 会员可在微信公众号、小程序或迎新现场领取实体卡与电子码。"));
-  byId("btnSuggest").addEventListener("click", () => showToast("欢迎私信 UBC CSSA 商务部，推荐你想享受折扣的大温小店。"));
+  byId("btnHowToCard").addEventListener("click", () => showToast("CSSA 会员可在微信公众号、迎新现场加入 CSSA 会员获取电子卡。"));
+  byId("btnSuggest").addEventListener("click", () => showToast("欢迎私信 CSSA 市场部，推荐你想享受折扣的大温小店。"));
 
   // Visual viewport also contracts when a phone's on-screen keyboard is visible.
   function updateViewport() {

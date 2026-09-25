@@ -57,7 +57,6 @@
         byId("cardName").textContent = partner.name;
         byId("cardArea").textContent = partner.address;
         byId("cardPerk").textContent = partner.perk.replace(/[；;]/g, "\n").trim();
-        byId("cardDesc").textContent = "凭店员卡到店使用";
         byId("cardTags").innerHTML = partner.tags.map(tag => `<span class="tag-badge">#${html(tag)}</span>`).join("");
         nav.disabled = !!partner.addressPending || !partner.lat || !partner.lng;
         nav.textContent = nav.disabled ? "地址待确认" : "📍 导航路线";

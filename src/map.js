@@ -12,14 +12,20 @@
       minZoom: 10,
       maxZoom: 18,
       zoomControl: false,
-      attributionControl: true
+      attributionControl: true,
+      fadeAnimation: false
     });
 
     // Esri World Topo Map
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
-      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+      attribution: '<details class="map-attribution"><summary>Powered by Esri · 地图来源</summary><div>Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community</div></details>',
+      updateWhenIdle: false,
+      updateInterval: 100,
+      keepBuffer: 3,
       maxZoom: 19
     }).addTo(map);
+
+    map.attributionControl.setPrefix(false);
 
     const coreBounds = L.latLngBounds(coreCoordinates);
     const outerBounds = L.latLngBounds(partners.filter(p => outerAreaIds.has(p.area) && p.lat && p.lng).map(p => [p.lat, p.lng]));
@@ -116,9 +122,15 @@
         map.flyTo(preset.center, preset.zoom, { duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.9 });
       }
     }
+    // Zoom also emits moveend. Coalesce paired events into one render per frame.
+    let renderFrame = null;
     map.on("moveend zoomend", () => {
-      renderMarkers(visiblePartners);
-      renderLandmarks();
+      if (renderFrame !== null) return;
+      renderFrame = requestAnimationFrame(() => {
+        renderFrame = null;
+        renderMarkers(visiblePartners);
+        renderLandmarks();
+      });
     });
     // Leaflet requires invalidateSize after its container changes dimensions.
     // https://leafletjs.com/reference.html#map-invalidatesize

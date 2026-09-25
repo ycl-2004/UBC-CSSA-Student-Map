@@ -1,7 +1,7 @@
 .map-stage { position: relative; min-width: 0; min-height: 0; border: 1.5px solid var(--border-warm); border-radius: 20px; overflow: hidden; background: #f6e8e7; box-shadow: var(--shadow-sm); }
 #leafletMap { width: 100%; height: 100%; z-index: 1; background: #f6e8e7; }
-.leaflet-tile-pane { filter: saturate(.48) sepia(.16) contrast(.94) brightness(1.03); }
-.area-quick-bar { position: absolute; z-index: 500; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 88px); padding: 6px 8px; border: 1.5px solid var(--border-warm); border-radius: 16px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(10px); box-shadow: var(--shadow-md); overflow-x: auto; scrollbar-width: thin; }
+.leaflet-tile { filter: saturate(.48) sepia(.16) contrast(.94) brightness(1.03); }
+.area-quick-bar { position: absolute; z-index: 500; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 88px); padding: 6px 8px; border: 1.5px solid var(--border-warm); border-radius: 16px; background: rgba(255, 255, 255, 0.94); box-shadow: var(--shadow-md); overflow-x: auto; scrollbar-width: thin; }
 .quick-title { padding: 0 6px; flex: none; font-size: 12px; font-weight: 800; color: var(--cssa-red); display: flex; align-items: center; gap: 4px; }
 .quick-jump-btn { flex: none; min-height: 36px; padding: 7px 12px; border: 1px solid var(--border-warm); border-radius: 999px; background: #fff; color: var(--ink-soft); white-space: nowrap; font-size: 12px; font-weight: 650; transition: all .16s ease; }
 .quick-jump-btn:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); }
@@ -10,7 +10,7 @@
 .quick-jump-btn.ubc-pill:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); }
 .quick-jump-btn.ubc-pill.active { background: var(--cssa-red-gradient); border-color: transparent; color: #fff; box-shadow: 0 3px 12px rgba(216, 38, 44, 0.35); }
 .map-controls { position: absolute; z-index: 500; top: 16px; right: 14px; display: flex; flex-direction: column; gap: 7px; }
-.ctrl-btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); color: var(--ink-soft); font-size: 20px; font-weight: 800; box-shadow: var(--shadow-sm); transition: all .16s ease; }
+.ctrl-btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.94); color: var(--ink-soft); font-size: 20px; font-weight: 800; box-shadow: var(--shadow-sm); transition: all .16s ease; }
 .ctrl-btn:hover { background: var(--cssa-red-light); color: var(--cssa-red); border-color: var(--cssa-red); transform: scale(1.05); }
 .custom-leaflet-marker { background: transparent !important; border: 0 !important; }
 .merchant-sticker-pin { position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer; transition: transform .18s ease; }
@@ -42,7 +42,7 @@
 .landmark-badge.burnaby { background: #f8f5ff; border-color: #d6ccf5; color: #625399; }
 .landmark-badge.airport { background: #eef6ff; border-color: #bed6f7; color: #35649b; }
 .landmark-badge.local { padding: 4px 8px; font-size: 11.5px; background: rgba(255, 255, 255, 0.95); border-color: var(--border-warm); color: var(--ink-soft); }
-.map-hint-pill { position: absolute; z-index: 500; left: 16px; bottom: 24px; display: flex; align-items: center; gap: 9px; padding: 8px 14px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); color: var(--ink-soft); font-size: 12px; font-weight: 650; box-shadow: var(--shadow-sm); }
+.map-hint-pill { position: absolute; z-index: 500; left: 16px; bottom: 24px; display: flex; align-items: center; gap: 9px; padding: 8px 14px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.94); color: var(--ink-soft); font-size: 12px; font-weight: 650; box-shadow: var(--shadow-sm); }
 .map-legend-item { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
 .map-legend-dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 .map-legend-dot.food { background: var(--pin-food); }
@@ -53,8 +53,8 @@
 .leaflet-control-attribution { font-size: 9.5px !important; color: #514e5a !important; background: rgba(255, 255, 255, 0.92) !important; border-top-left-radius: 6px !important; }
 .map-unavailable { position: absolute; inset: 35% 20px auto; z-index: 550; padding: 20px; border-radius: 16px; background: var(--paper); font-size: 14px; line-height: 1.6; }
 
-/* A transparent rose wash sits above tiles only; roads, labels and pins stay crisp. */
-.leaflet-tile-pane::after { content: ""; position: absolute; inset: -100vh -100vw; background: rgb(255 182 191 / 13%); mix-blend-mode: multiply; pointer-events: none; }
+/* A viewport-sized wash avoids a huge blended layer moving with the tile pane. */
+.map-stage::after { content: ""; position: absolute; z-index: 2; inset: 0; background: rgb(255 182 191 / 8%); pointer-events: none; }
 .landmark-badge.downtown { background: #fff0f3; border-color: #da8793; color: #9b2440; }
 .landmark-badge.downtown::before { content: "✦ "; }
 .landmark-badge.ubc::before { content: "✿ "; }
@@ -62,3 +62,9 @@
 .stamp-flower { font-size: 36px; line-height: 1; color: var(--cssa-red); }
 .map-stamp small { display: block; margin-top: 3px; font-size: 11px; font-weight: 600; }
 .landmark-badge.major.compact { padding: 3px 6px; font-size: 10px; border-width: 1px; transform: translate(-50%, -140%); }
+
+.map-attribution { position: relative; text-align: right; font-size: 10px; }
+.map-attribution summary { cursor: pointer; padding: 5px 7px; list-style: none; }
+.map-attribution summary::-webkit-details-marker { display: none; }
+.map-attribution summary::after { content: " ⓘ"; }
+.map-attribution[open] div { position: absolute; bottom: 100%; right: 0; width: min(300px, 75vw); max-height: 140px; overflow-y: auto; padding: 10px; border: 1px solid var(--border-warm); border-radius: 10px; background: #fff; color: var(--ink-soft); text-align: left; line-height: 1.5; box-shadow: var(--shadow-sm); }

@@ -63,6 +63,19 @@
       toggle.setAttribute("aria-expanded", String(open));
     });
     byId("searchInput").addEventListener("focus", () => { if (mobileLayout.matches) setExpanded(true); });
+    // Mouse wheels can browse overflowing chip rows; trackpad horizontal gestures stay native.
+    document.querySelectorAll(".chip-scroll, .area-quick-bar").forEach(row => {
+      row.addEventListener("wheel", event => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || Math.abs(event.deltaX) > 0 || !event.deltaY) return;
+        const max = row.scrollWidth - row.clientWidth;
+        if (max <= 0) return;
+        const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? row.clientWidth : 1);
+        const next = Math.max(0, Math.min(max, row.scrollLeft + delta));
+        if (next === row.scrollLeft) return;
+        event.preventDefault();
+        row.scrollLeft = next;
+      }, { passive: false });
+    });
     setExpanded(false);
     return { setExpanded };
   }
