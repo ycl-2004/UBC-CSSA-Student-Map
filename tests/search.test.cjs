@@ -63,3 +63,15 @@ test('Downtown is separate from the remaining Vancouver locations', () => {
   assert.equal(search('Vancouver').filter(p => p.area === 'downtown').length, 3);
   assert.equal(search('share tea', { area: 'downtown' })[0].id, 'partner_4');
 });
+test('short latin tokens and global club terms do not cause false positives', () => {
+  const okMatches = search('ok');
+  assert.equal(okMatches.length, 1);
+  assert.equal(okMatches[0].id, 'partner_29');
+  assert.ok(!okMatches.some(p => p.name.includes('Tokyo') || p.name.includes('Boxing') || p.name.includes('Share')));
+
+  const ubcMatches = search('ubc');
+  assert.equal(ubcMatches.length, 1);
+  assert.equal(ubcMatches[0].area, 'ubc');
+
+  assert.equal(search('cssa').length, 0);
+});

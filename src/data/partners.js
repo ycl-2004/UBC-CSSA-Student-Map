@@ -287,8 +287,6 @@
     "aliases": [
       "hakumori",
       "haku mori",
-      "ubccssa",
-      "ubc cssa",
       "饮料"
     ]
   },
