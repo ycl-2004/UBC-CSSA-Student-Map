@@ -49,7 +49,7 @@
 
 1. **点击打开在线地图**：<https://ycl-2004.github.io/UBC-CSSA-Student-Map/>；
 2. **随心筛选**：
-   * 🌲 点选商圈：`UBC 本部`、`Downtown`、`Richmond`、`Burnaby`、`Vancouver 其余`；
+   * 🌲 点选商圈：`UBC 本部`、`Downtown`、`Richmond`、`Burnaby`、`Vancouver`；
    * 🍜 点选分类：`美食正餐`、`奶茶甜点`、`玩乐KTV`、`生活日常`；
    * 🔍 关键词搜索：店名、英文名、拼音、甚至想吃的菜品都能搜到！
 3. **点击查看详情**：每家店都有详细的**完整会员优惠、到店地址、一键导航路线与官网链接**；
