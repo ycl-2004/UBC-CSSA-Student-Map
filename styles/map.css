@@ -1,21 +1,22 @@
-.map-stage { position: relative; min-width: 0; min-height: 0; border: 1.5px solid var(--border-warm); border-radius: 20px; overflow: hidden; background: #f6e8e7; box-shadow: var(--shadow-sm); }
-#leafletMap { width: 100%; height: 100%; z-index: 1; background: #f6e8e7; }
-.leaflet-tile { filter: saturate(.48) sepia(.16) contrast(.94) brightness(1.03); }
-.area-quick-bar { position: absolute; z-index: 500; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 88px); padding: 6px 8px; border: 1.5px solid var(--border-warm); border-radius: 16px; background: rgba(255, 255, 255, 0.94); box-shadow: var(--shadow-md); overflow-x: auto; scrollbar-width: thin; }
+.map-stage { position: relative; min-width: 0; min-height: 0; border: 1.5px solid var(--border-warm); border-radius: 20px; overflow: hidden; background: #fbf5f4; box-shadow: var(--shadow-sm); }
+#leafletMap { width: 100%; height: 100%; z-index: 1; background: #fbf5f4; }
+.leaflet-tile { filter: saturate(.82) contrast(1.02) brightness(1.02) hue-rotate(-4deg); }
+.area-quick-bar { position: absolute; z-index: 500; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 76px); padding: 5px 8px; border: 1.5px solid var(--border-warm); border-radius: 999px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--shadow-md); overflow-x: auto; scrollbar-width: none; }
+.area-quick-bar::-webkit-scrollbar { display: none; }
 .quick-title { padding: 0 6px; flex: none; font-size: 12px; font-weight: 800; color: var(--cssa-red); display: flex; align-items: center; gap: 4px; }
-.quick-jump-btn { flex: none; min-height: 36px; padding: 7px 12px; border: 1px solid var(--border-warm); border-radius: 999px; background: #fff; color: var(--ink-soft); white-space: nowrap; font-size: 12px; font-weight: 650; transition: all .16s ease; }
-.quick-jump-btn:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); }
+.quick-jump-btn { flex: none; min-height: 36px; padding: 7px 12px; border: 1px solid var(--border-warm); border-radius: 999px; background: #fff; color: var(--ink-soft); white-space: nowrap; font-size: 12px; font-weight: 650; transition: all .18s cubic-bezier(0.16, 1, 0.3, 1); }
+.quick-jump-btn:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); transform: translateY(-1px); }
 .quick-jump-btn.active { background: var(--cssa-red-gradient); border-color: transparent; color: #fff; box-shadow: 0 2px 8px rgba(216, 38, 44, 0.28); }
 .quick-jump-btn.ubc-pill { background: #fff8f8; color: var(--cssa-red-dark); border-color: #f8c1c4; font-weight: 750; }
-.quick-jump-btn.ubc-pill:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); }
+.quick-jump-btn.ubc-pill:hover { background: var(--cssa-red-light); border-color: var(--cssa-red); color: var(--cssa-red); transform: translateY(-1px); }
 .quick-jump-btn.ubc-pill.active { background: var(--cssa-red-gradient); border-color: transparent; color: #fff; box-shadow: 0 3px 12px rgba(216, 38, 44, 0.35); }
 .map-controls { position: absolute; z-index: 500; top: 16px; right: 14px; display: flex; flex-direction: column; gap: 7px; }
-.ctrl-btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.94); color: var(--ink-soft); font-size: 20px; font-weight: 800; box-shadow: var(--shadow-sm); transition: all .16s ease; }
+.ctrl-btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--ink-soft); font-size: 20px; font-weight: 800; box-shadow: var(--shadow-sm); transition: all .16s ease; }
 .ctrl-btn:hover { background: var(--cssa-red-light); color: var(--cssa-red); border-color: var(--cssa-red); transform: scale(1.05); }
 .custom-leaflet-marker { background: transparent !important; border: 0 !important; }
-.merchant-sticker-pin { position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer; transition: transform .18s ease; }
-.merchant-sticker-pin:hover { transform: translate(-50%, -100%) scale(1.1); }
-.pin-bubble { display: grid; place-items: center; padding: 3px; border: 2.5px solid #d66c72; border-radius: 17px 19px 16px 19px; background: #fff; box-shadow: 0 0 0 3px #fff, 0 5px 10px rgb(123 52 62 / 18%); transition: all .18s ease; }
+.merchant-sticker-pin { position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer; transition: transform .2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.merchant-sticker-pin:hover { transform: translate(-50%, -100%) scale(1.14); }
+.pin-bubble { display: grid; place-items: center; padding: 3px; border: 2.5px solid #d66c72; border-radius: 18px 20px 17px 20px; background: #fff; box-shadow: 0 0 0 3px #fff, 0 6px 14px rgb(123 52 62 / 18%); transition: all .18s ease; }
 .pin-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; font-size: 19px; background: #fff; }
 .category-food .pin-icon { background: #fff1ed; }
 .category-drink .pin-icon { background: #eaf8f3; }
@@ -29,20 +30,19 @@
 .merchant-sticker-pin.active .pin-caption { background: var(--cssa-red-gradient); color: #fff; border-color: #fff; box-shadow: 0 3px 10px rgba(216, 38, 44, 0.35); }
 .pin-sparkle { position: absolute; top: -10px; right: -9px; color: var(--cssa-red); font-size: 18px; text-shadow: 0 1px #fff; display: none; }
 .merchant-sticker-pin.active .pin-sparkle { display: block; }
-.merchant-cluster { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; height: 44px; border: 2.5px solid #fff; border-radius: 38% 46% 38% 46%; background: var(--cssa-red-gradient); color: #fff; font-size: 15px; font-weight: 850; box-shadow: 0 4px 14px rgba(216, 38, 44, 0.38), 0 1px 3px rgba(0, 0, 0, 0.12); cursor: pointer; transition: transform .18s ease; }
-.merchant-cluster:hover { transform: scale(1.12); box-shadow: 0 6px 18px rgba(216, 38, 44, 0.48); }
+.merchant-cluster { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; height: 44px; border: 2.5px solid #fff; border-radius: 38% 46% 38% 46%; background: var(--cssa-red-gradient); color: #fff; font-size: 15px; font-weight: 850; box-shadow: 0 4px 14px rgba(216, 38, 44, 0.38), 0 1px 3px rgba(0, 0, 0, 0.12); cursor: pointer; transition: transform .2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .2s ease; }
+.merchant-cluster:hover { transform: scale(1.14); box-shadow: 0 8px 22px rgba(216, 38, 44, 0.48); }
 .merchant-cluster span { transform: none; }
 .merchant-cluster::after { content: "✿"; position: absolute; right: -5px; top: -9px; color: #ae243b; background: #fff5f3; border: 2px solid #fff; border-radius: 50%; font-size: 17px; line-height: 19px; width: 21px; text-align: center; }
-.landmark-badge { display: inline-block; padding: 5px 11px; border: 1.5px solid #fff; border-radius: 11px; background: #fff; color: #433b42; font-size: 13px; font-weight: 750; white-space: nowrap; transform: translate(-50%, -50%); pointer-events: none; box-shadow: var(--shadow-sm); }
-.landmark-badge.major { padding: 7px 13px; border-width: 2px; font-size: 14.5px; }
+.landmark-badge { display: inline-block; padding: 5px 12px; border: 1.5px solid #fff; border-radius: 999px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: #433b42; font-size: 13px; font-weight: 750; white-space: nowrap; transform: translate(-50%, -50%); pointer-events: none; box-shadow: 0 2px 8px rgba(50, 30, 20, 0.08); }
+.landmark-badge.major { padding: 6px 14px; border-width: 2px; font-size: 14px; }
 .landmark-badge.ubc { background: #fff7f7; border-color: var(--cssa-red); color: var(--cssa-red-dark); font-weight: 850; box-shadow: 0 4px 14px rgba(216, 38, 44, 0.28); }
-.landmark-badge.ubc::before { content: "🏛️ "; font-size: 13px; }
 .landmark-badge.vancouver { background: #fff7f4; border-color: #f7bfb1; color: #a04232; }
 .landmark-badge.richmond { background: #fffcf0; border-color: #f1dd94; color: #8e6519; }
 .landmark-badge.burnaby { background: #f8f5ff; border-color: #d6ccf5; color: #625399; }
 .landmark-badge.airport { background: #eef6ff; border-color: #bed6f7; color: #35649b; }
-.landmark-badge.local { padding: 4px 8px; font-size: 11.5px; background: rgba(255, 255, 255, 0.95); border-color: var(--border-warm); color: var(--ink-soft); }
-.map-hint-pill { position: absolute; z-index: 500; left: 16px; bottom: 24px; display: flex; align-items: center; gap: 9px; padding: 8px 14px; border: 1.5px solid var(--border-warm); border-radius: 14px; background: rgba(255, 255, 255, 0.94); color: var(--ink-soft); font-size: 12px; font-weight: 650; box-shadow: var(--shadow-sm); }
+.landmark-badge.local { padding: 4px 10px; font-size: 11.5px; background: rgba(255, 255, 255, 0.95); border-color: var(--border-warm); color: var(--ink-soft); }
+.map-hint-pill { position: absolute; z-index: 500; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 8px; padding: 7px 13px; border: 1px solid var(--border-warm); border-radius: 999px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--ink-soft); font-size: 11.5px; font-weight: 650; box-shadow: 0 2px 10px rgba(50, 30, 20, 0.08); }
 .map-legend-item { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
 .map-legend-dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 .map-legend-dot.food { background: var(--pin-food); }
@@ -53,14 +53,14 @@
 .leaflet-control-attribution { font-size: 9.5px !important; color: #514e5a !important; background: rgba(255, 255, 255, 0.92) !important; border-top-left-radius: 6px !important; }
 .map-unavailable { position: absolute; inset: 35% 20px auto; z-index: 550; padding: 20px; border-radius: 16px; background: var(--paper); font-size: 14px; line-height: 1.6; }
 
-/* A viewport-sized wash avoids a huge blended layer moving with the tile pane. */
-.map-stage::after { content: ""; position: absolute; z-index: 2; inset: 0; background: rgb(255 182 191 / 8%); pointer-events: none; }
+/* A soft ambient warm tint that unifies the Esri tiles with the CSSA pastel brand palette without washing out contrast */
+.map-stage::after { content: ""; position: absolute; z-index: 2; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 240, 242, 0.08) 100%); pointer-events: none; }
 .landmark-badge.downtown { background: #fff0f3; border-color: #da8793; color: #9b2440; }
 .landmark-badge.downtown::before { content: "✦ "; }
 .landmark-badge.ubc::before { content: "✿ "; }
-.map-stamp { position: absolute; z-index: 450; bottom: 72px; left: 20px; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #fff; outline: 1px dashed #d9919a; border-radius: 18px 22px 17px 23px; background: #fff5f1; color: var(--cssa-red-dark); box-shadow: var(--shadow-sm); transform: rotate(-4deg); pointer-events: none; font-size: 13px; font-weight: 850; }
-.stamp-flower { font-size: 36px; line-height: 1; color: var(--cssa-red); }
-.map-stamp small { display: block; margin-top: 3px; font-size: 11px; font-weight: 600; }
+.map-stamp { position: absolute; z-index: 450; bottom: 56px; left: 16px; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 2px solid #fff; outline: 1px dashed #d9919a; border-radius: 16px 20px 15px 20px; background: rgba(255, 245, 241, 0.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--cssa-red-dark); box-shadow: 0 4px 14px rgba(216, 38, 44, 0.12); transform: rotate(-3deg); pointer-events: none; font-size: 12px; font-weight: 850; }
+.stamp-flower { font-size: 30px; line-height: 1; color: var(--cssa-red); }
+.map-stamp small { display: block; margin-top: 2px; font-size: 10px; font-weight: 600; color: var(--muted); }
 .landmark-badge.major.compact { padding: 3px 6px; font-size: 10px; border-width: 1px; transform: translate(-50%, -140%); }
 
 .map-attribution { position: relative; text-align: right; font-size: 10px; }

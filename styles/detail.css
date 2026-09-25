@@ -2,26 +2,26 @@
 .detail-card {
   position: absolute; inset: auto 16px 16px auto; z-index: 1000;
   width: min(370px, calc(100% - 32px)); max-width: none; max-height: calc(100% - 32px);
-  margin: 0; padding: 0; border: 1.5px solid var(--border-warm); border-top: 3px solid var(--cssa-red); border-radius: 20px;
-  background: var(--paper); color: var(--ink); box-shadow: var(--shadow-lg); overflow: hidden;
+  margin: 0; padding: 0; border: 1.5px solid var(--border-warm); border-top: 3.5px solid var(--cssa-red); border-radius: 20px;
+  background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: var(--ink); box-shadow: 0 14px 38px rgba(45, 20, 20, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04); overflow: hidden;
 }
 .detail-card[open] { display: flex; flex-direction: column; }
-.detail-card::backdrop { background: rgba(30, 20, 20, 0.35); backdrop-filter: blur(3px); }
-.detail-header { display: flex; align-items: flex-start; gap: 12px; flex: none; padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); background: var(--paper); }
-.detail-large-icon { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1.5px solid #ffd2c7; border-radius: 14px; background: #fff1ed; font-size: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+.detail-card::backdrop { background: rgba(30, 20, 20, 0.38); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.detail-header { display: flex; align-items: flex-start; gap: 12px; flex: none; padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); background: transparent; }
+.detail-large-icon { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1.5px solid #ffd2c7; border-radius: 14px; background: #fff1ed; font-size: 24px; box-shadow: 0 2px 8px rgba(216, 38, 44, 0.08); }
 .detail-title-wrap { flex: 1; min-width: 0; }
 .detail-eyebrow { margin-bottom: 4px; color: var(--cssa-red); font-size: 11.5px; font-weight: 800; letter-spacing: .03em; }
 .detail-name { margin: 0; font-size: 18.5px; font-weight: 800; line-height: 1.35; color: var(--ink); overflow-wrap: anywhere; }
-.close-card-btn { display: grid; place-items: center; width: 38px; height: 38px; flex: none; border: 1.5px solid var(--border-warm); border-radius: 50%; background: #fff; color: var(--muted); font-size: 22px; transition: all .16s ease; }
-.close-card-btn:hover { background: var(--cssa-red-light); color: var(--cssa-red); border-color: var(--cssa-red); }
+.close-card-btn { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border: 1.5px solid var(--border-warm); border-radius: 50%; background: #fff; color: var(--muted); font-size: 20px; transition: all .16s ease; }
+.close-card-btn:hover { background: var(--cssa-red-light); color: var(--cssa-red); border-color: var(--cssa-red); transform: rotate(90deg); }
 .detail-body { min-height: 0; padding: 16px 18px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #dccbb7 transparent; }
 .detail-location-str { margin: 0 0 14px; color: var(--ink-soft); font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
-.detail-perk-box { position: relative; margin-bottom: 16px; padding: 16px; border: 1.5px dashed var(--gold-border); border-radius: 16px; background: var(--gold-gradient); box-shadow: 0 2px 8px rgba(146, 64, 14, 0.06); }
-.perk-box-title { display: flex; align-items: center; justify-content: space-between; color: var(--gold-dark); font-size: 12px; font-weight: 750; }
-.perk-box-title::after { content: "CSSA 独家专属"; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: rgba(217, 119, 6, 0.15); color: var(--gold-dark); }
+.detail-perk-box { position: relative; margin-bottom: 16px; padding: 16px; border: 1.5px dashed var(--gold-border); border-radius: 16px; background: linear-gradient(135deg, #fffdf8 0%, #fef3c7 100%); box-shadow: 0 2px 10px rgba(146, 64, 14, 0.07); }
+.perk-box-title { display: flex; align-items: center; justify-content: space-between; color: var(--gold-dark); font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+.perk-box-title::after { content: "CSSA 会员专属"; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(217, 119, 6, 0.16); color: var(--gold-dark); }
 .perk-box-value { margin-top: 10px; white-space: pre-line; overflow-wrap: anywhere; font-size: 15.5px; font-weight: 750; line-height: 1.6; color: var(--cssa-red-dark); }
 .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.tag-badge { padding: 4px 9px; border-radius: 7px; background: var(--paper-warm); border: 1px solid var(--border-warm); color: var(--ink-soft); font-size: 12px; font-weight: 600; }
+.tag-badge { padding: 4px 10px; border-radius: 999px; background: var(--paper-warm); border: 1px solid var(--border-warm); color: var(--ink-soft); font-size: 11.5px; font-weight: 600; }
 .detail-actions-row { display: flex; gap: 10px; flex: none; padding: 14px 18px; border-top: 1px solid var(--border-subtle); background: var(--paper); }
 .detail-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; flex: 1; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1.5px solid var(--border-warm); border-radius: 12px; font-size: 13px; font-weight: 700; transition: all .16s ease; }
 .detail-btn.sub { background: #fff; color: var(--ink-soft); }

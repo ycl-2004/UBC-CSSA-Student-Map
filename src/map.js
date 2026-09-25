@@ -41,11 +41,11 @@
     districtGlows.forEach(area => L.circle([area.lat, area.lng], {
       radius: area.radius,
       color: area.color,
-      weight: 1.5,
-      opacity: 0.45,
-      dashArray: "6 8",
+      weight: 1.2,
+      opacity: 0.32,
+      dashArray: "4 6",
       fillColor: area.color,
-      fillOpacity: 0.05,
+      fillOpacity: 0.04,
       interactive: false
     }).addTo(districtGroup));
 
