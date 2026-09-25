@@ -21,8 +21,8 @@
         <div class="brand-info">
           <h1>UBC CSSA <span class="brand-title-desktop">会员专属地图</span><span class="brand-title-mobile">福利地图</span><span class="brand-flower" aria-hidden="true">✿</span></h1>
           <div class="tagline">
-            <span>大温真实探索指南 · 手账手绘风格</span>
-            <span class="pill">2026-2027 专属权益</span>
+            <span>下课后，一起探索有优惠的小店</span>
+            <span class="pill">★ 2026-2027 专属权益</span>
           </div>
         </div>
       </div>
@@ -75,12 +75,13 @@
         <div class="filter-section">
           <div class="filter-label">
             <span>按大温商圈</span>
-            <span class="filter-caption">真实街区</span>
+            <span class="filter-caption">Downtown 单独列出</span>
           </div>
           <div class="chip-scroll" role="group" aria-label="区域筛选">
             <button class="filter-chip" type="button" data-area="all" aria-pressed="true">所有店铺</button>
             <button class="filter-chip" type="button" data-area="ubc" aria-pressed="false">🌲 UBC 校区</button>
-            <button class="filter-chip" type="button" data-area="vancouver" aria-pressed="false">🌆 Vancouver</button>
+            <button class="filter-chip" type="button" data-area="downtown" aria-pressed="false">🌇 Downtown</button>
+            <button class="filter-chip" type="button" data-area="vancouver" aria-pressed="false">🏡 Vancouver 其余</button>
             <button class="filter-chip" type="button" data-area="richmond" aria-pressed="false">🥟 Richmond</button>
             <button class="filter-chip" type="button" data-area="burnaby" aria-pressed="false">🛍️ Burnaby</button>
             <button class="filter-chip" type="button" data-area="outer" aria-pressed="false">🗺️ 其他大温</button>
@@ -91,7 +92,7 @@
         <!-- Result Stats -->
         <div class="list-meta">
           <span>共找到 <strong id="partnerCount">0</strong> 家 CSSA 合作小店</span>
-          <span class="list-caption">含线上配送商家</span>
+          <span class="list-caption">优惠仅限到店</span>
         </div>
 
         <!-- Scrollable Cards -->
@@ -110,9 +111,10 @@
           <div class="quick-title"><span>✦</span> 飞向区域</div>
           <button class="quick-jump-btn" type="button" data-jump="core">✦ 核心商圈</button>
           <button class="quick-jump-btn ubc-pill" type="button" data-jump="ubc">🌲 UBC 本部</button>
-          <button class="quick-jump-btn" type="button" data-jump="vancouver">🌆 温哥华</button>
-          <button class="quick-jump-btn" type="button" data-jump="richmond">🥟 列治文</button>
-          <button class="quick-jump-btn" type="button" data-jump="burnaby">🛍️ 本拿比</button>
+          <button class="quick-jump-btn" type="button" data-jump="downtown">🌇 Downtown</button>
+          <button class="quick-jump-btn" type="button" data-jump="vancouver">🏡 Vancouver 其余</button>
+          <button class="quick-jump-btn" type="button" data-jump="richmond">🥟 Richmond</button>
+          <button class="quick-jump-btn" type="button" data-jump="burnaby">🛍️ Burnaby</button>
           <button class="quick-jump-btn" type="button" data-jump="outer">🗺️ 其他大温</button>
           <button class="quick-jump-btn" type="button" data-jump="all">🌐 全部店铺</button>
         </div>
@@ -124,9 +126,11 @@
           <button class="ctrl-btn" id="btnResetView" type="button" aria-label="复位地图" title="复位视角">⟲</button>
         </div>
 
+        <div class="map-stamp" aria-hidden="true"><span class="stamp-flower">✿</span><span>UBC CSSA<small>下课，去逛逛！</small></span></div>
+
         <!-- Bottom Left Hint Pill -->
         <div class="map-hint-pill">
-          <span>🖍️ 店铺分类</span>
+          <span>✦ CSSA 分类</span>
           <span class="map-legend-item"><i class="map-legend-dot food"></i>美食</span>
           <span class="map-legend-item"><i class="map-legend-dot drink"></i>饮品</span>
           <span class="map-legend-item"><i class="map-legend-dot fun"></i>玩乐</span>
@@ -145,11 +149,10 @@
           <div class="detail-perk-box"><div class="perk-box-title">会员专属优惠</div><div class="perk-box-value" id="cardPerk"></div></div>
           <div class="detail-tags" id="cardTags"></div>
           <p class="detail-desc" id="cardDesc"></p>
-          <p class="usage-note" id="usageNote" hidden></p>
         </div>
         <footer class="detail-actions-row">
           <button class="detail-btn sub" id="btnNavMaps" type="button">📍 导航路线</button>
-          <button class="detail-btn main" id="btnHowToUse" type="button" aria-expanded="false" aria-controls="usageNote">使用说明</button>
+          <a class="detail-btn main" id="shopLink" target="_blank" rel="noopener noreferrer">店铺链接 ↗</a>
         </footer>
       </dialog>
     </section>

@@ -8,15 +8,16 @@
     const map = L.map("leafletMap", {
       center: [49.2350, -123.1250],
       zoom: 11,
+      zoomSnap: 0.25,
       minZoom: 10,
       maxZoom: 18,
       zoomControl: false,
       attributionControl: true
     });
 
-    // Keep roads and terrain colors while drawing only our curated place labels on top.
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
-      attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, &copy; OpenStreetMap contributors, and the GIS user community',
+    // Esri World Topo Map
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
       maxZoom: 19
     }).addTo(map);
 
@@ -34,28 +35,29 @@
     districtGlows.forEach(area => L.circle([area.lat, area.lng], {
       radius: area.radius,
       color: area.color,
-      weight: 2,
-      opacity: 0.5,
-      dashArray: "5 8",
+      weight: 1.5,
+      opacity: 0.45,
+      dashArray: "6 8",
       fillColor: area.color,
-      fillOpacity: 0.28,
+      fillOpacity: 0.05,
       interactive: false
     }).addTo(districtGroup));
 
     function renderLandmarks() {
       landmarkGroup.clearLayers();
       const zoom = map.getZoom();
+      // When zoomed in close, street names on the map and merchant pins take center stage
+      if (zoom >= 13.8) return;
       const visibleBounds = map.getBounds().pad(0.08);
-      const level = zoom < 13.5 ? "major" : "local";
-      const coreNames = new Set(["Vancouver", "Richmond", "Burnaby", "UBC", "YVR Airport"]);
+      const coreNames = new Set(["Vancouver", "Downtown", "Richmond", "Burnaby", "UBC", "YVR Airport"]);
       const isCoreView = coreBounds.contains(map.getCenter());
-      landmarks.filter(lm => lm.level === level && (level !== "major" || !isCoreView || coreNames.has(lm.name)) && visibleBounds.contains([lm.lat, lm.lng])).forEach(lm => {
+      landmarks.filter(lm => lm.level === "major" && (!isCoreView || coreNames.has(lm.name)) && visibleBounds.contains([lm.lat, lm.lng])).forEach(lm => {
         const icon = L.divIcon({
           className: "custom-leaflet-marker",
-          html: `<div class="landmark-badge ${lm.level} ${lm.tone}">${lm.name}</div>`,
+          html: `<div class="landmark-badge ${lm.level} ${lm.tone} ${zoom < 11 ? "compact" : ""}">${lm.name}</div>`,
           iconSize: [0, 0]
         });
-        L.marker([lm.lat, lm.lng], { icon, interactive: false, zIndexOffset: 1200 }).addTo(landmarkGroup);
+        L.marker([lm.lat, lm.lng], { icon, interactive: false, zIndexOffset: -500 }).addTo(landmarkGroup);
       });
     }
 
@@ -97,7 +99,8 @@
     const jumpPresets = {
       core: { bounds: coreBounds, maxZoom: 12.5 },
       ubc: { center: [49.2630, -123.2460], zoom: 15 },
-      vancouver: { center: [49.2820, -123.1250], zoom: 14 },
+      downtown: { center: [49.2815, -123.1170], zoom: 14 },
+      vancouver: { bounds: L.latLngBounds(partners.filter(p => p.area === "vancouver").map(p => [p.lat, p.lng])), maxZoom: 12.5 },
       richmond: { center: [49.1790, -123.1330], zoom: 14 },
       burnaby: { center: [49.2290, -123.0030], zoom: 14 },
       outer: { bounds: outerBounds, maxZoom: 11.6 },
@@ -108,9 +111,9 @@
       const preset = jumpPresets[dest];
       if (!preset) return;
       if (preset.bounds) {
-        map.flyToBounds(preset.bounds, { padding: [48, 48], maxZoom: preset.maxZoom, duration: 0.9 });
+        map.flyToBounds(preset.bounds, { padding: [48, 48], maxZoom: preset.maxZoom, duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.9 });
       } else {
-        map.flyTo(preset.center, preset.zoom, { duration: 0.9 });
+        map.flyTo(preset.center, preset.zoom, { duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.9 });
       }
     }
     map.on("moveend zoomend", () => {
@@ -125,7 +128,7 @@
     return {
       update(visible, id) { visiblePartners = visible; selectedId = id; renderMarkers(visible); },
       focusPartner(partner) {
-        if (partner.lat && partner.lng) map.flyTo([partner.lat, partner.lng], 15, { duration: 0.8 });
+        if (partner.lat && partner.lng) map.flyTo([partner.lat, partner.lng], 15, { duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.8 });
       },
       flyToPreset,
       zoomIn: () => map.zoomIn(),

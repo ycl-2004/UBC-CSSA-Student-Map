@@ -1,10 +1,11 @@
-// Runtime source of truth. One record per location; onlineOnly entries have no map coordinates.
+// Runtime source of truth. One record per location; addressPending entries have no map coordinates.
 (() => {
   "use strict";
   const partners = [
   {
     "id": "partner_1",
     "name": "海底捞（Broadway）",
+    "website": "https://www.haidilao-inc.com/ca/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "food",
@@ -30,6 +31,7 @@
   {
     "id": "partner_2",
     "name": "Rumble Boxing Richmond",
+    "website": "https://rumbleboxing.com/vancouver",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "fun",
@@ -54,6 +56,7 @@
   {
     "id": "partner_3",
     "name": "From 1% Skin Lab",
+    "website": "https://f1skinlab.ca/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "life",
@@ -81,13 +84,15 @@
   {
     "id": "partner_4",
     "name": "Share Tea",
-    "area": "vancouver",
-    "areaLabel": "Vancouver",
+    "website": "https://www.1992sharetea.com/",
+    "area": "downtown",
+    "areaLabel": "Downtown · Vancouver",
     "category": "drink",
     "icon": "🧋",
     "perk": "10% off",
     "shortPerk": "10% off",
     "tags": [
+      "Downtown",
       "Vancouver"
     ],
     "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：1020 Mainland St Unit 30, Vancouver, BC V6B 2T5。",
@@ -95,6 +100,8 @@
     "lat": 49.2761,
     "lng": -123.11928,
     "aliases": [
+      "市中心",
+      "downtown",
       "share tea",
       "sharetea",
       "bubble tea",
@@ -106,6 +113,7 @@
   {
     "id": "partner_5",
     "name": "Share Tea",
+    "website": "https://www.1992sharetea.com/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "drink",
@@ -131,6 +139,7 @@
   {
     "id": "partner_6",
     "name": "Share Tea",
+    "website": "https://www.1992sharetea.com/",
     "area": "ubc",
     "areaLabel": "UBC Campus",
     "category": "drink",
@@ -157,6 +166,7 @@
   {
     "id": "partner_7",
     "name": "Share Tea",
+    "website": "https://www.1992sharetea.com/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "drink",
@@ -182,6 +192,7 @@
   {
     "id": "partner_8",
     "name": "Share Tea",
+    "website": "https://www.1992sharetea.com/",
     "area": "langley",
     "areaLabel": "Langley",
     "category": "drink",
@@ -207,6 +218,7 @@
   {
     "id": "partner_9",
     "name": "Share Tea",
+    "website": "https://www.1992sharetea.com/",
     "area": "surrey",
     "areaLabel": "Surrey",
     "category": "drink",
@@ -232,6 +244,7 @@
   {
     "id": "partner_10",
     "name": "Share Tea",
+    "website": "https://www.1992sharetea.com/",
     "area": "coquitlam",
     "areaLabel": "Coquitlam",
     "category": "drink",
@@ -257,16 +270,17 @@
   {
     "id": "partner_11",
     "name": "HAKUMORI",
+    "website": "https://hakumori.shop/",
     "area": "burnaby",
     "areaLabel": "Burnaby",
-    "category": "life",
-    "icon": "🥗",
-    "perk": "官网所有商品使用折扣码 UBCCSSA，享 15% off",
-    "shortPerk": "官网 15% off · UBCCSSA",
+    "category": "drink",
+    "icon": "🧋",
+    "perk": "到店消费 15% off",
+    "shortPerk": "到店 15% off",
     "tags": [
       "Burnaby"
     ],
-    "desc": "UBC CSSA 官方合作商家。凭会员卡享：官网所有商品使用折扣码 UBCCSSA，享 15% off。地址：5154 Still Creek Ave, Burnaby, BC V5C 4E4。",
+    "desc": "UBC CSSA 官方合作商家。凭会员卡享：到店消费 15% off。地址：5154 Still Creek Ave, Burnaby, BC V5C 4E4。",
     "address": "5154 Still Creek Ave, Burnaby, BC V5C 4E4",
     "lat": 49.2604,
     "lng": -122.9984,
@@ -275,13 +289,13 @@
       "haku mori",
       "ubccssa",
       "ubc cssa",
-      "网店",
-      "护肤"
+      "饮料"
     ]
   },
   {
     "id": "partner_12",
     "name": "春芳号 Chun Fun How",
+    "website": "https://chunfunhow.ca/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "drink",
@@ -306,6 +320,7 @@
   {
     "id": "partner_13",
     "name": "春芳号 Chun Fun How",
+    "website": "https://chunfunhow.ca/",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "drink",
@@ -330,6 +345,7 @@
   {
     "id": "partner_14",
     "name": "First Bite Tart & Cake",
+    "website": "https://firstbitevan.com/",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "drink",
@@ -356,13 +372,15 @@
   {
     "id": "partner_15",
     "name": "Tokyo in April",
-    "area": "vancouver",
-    "areaLabel": "Vancouver",
+    "website": "https://tokyoinapril.goopter.com/",
+    "area": "downtown",
+    "areaLabel": "Downtown · Vancouver",
     "category": "food",
     "icon": "🍣",
     "perk": "4 人及以上用餐 10% off",
     "shortPerk": "4 人及以上用餐 10% off",
     "tags": [
+      "Downtown",
       "Vancouver"
     ],
     "desc": "UBC CSSA 官方合作商家。凭会员卡享：4 人及以上用餐 10% off。地址：526 Abbott St / International Village Mall, 88 W Pender St Unit 1103, Vancouver, BC V6B 6N7。",
@@ -370,6 +388,8 @@
     "lat": 49.28028,
     "lng": -123.1067,
     "aliases": [
+      "市中心",
+      "downtown",
       "tokyo in april",
       "日料",
       "日本料理"
@@ -378,6 +398,7 @@
   {
     "id": "partner_16",
     "name": "Slothfuls",
+    "website": "https://www.slothfuls.com/",
     "area": "burnaby",
     "areaLabel": "Burnaby",
     "category": "drink",
@@ -400,6 +421,7 @@
   {
     "id": "partner_17",
     "name": "黑牛家（Hot Spot Buffet）",
+    "website": "https://hotspotbuffet.ca/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "food",
@@ -423,6 +445,7 @@
   {
     "id": "partner_18",
     "name": "MYST 觅食",
+    "website": "https://myst6400.com/",
     "area": "burnaby",
     "areaLabel": "Burnaby",
     "category": "food",
@@ -448,6 +471,7 @@
   {
     "id": "partner_19",
     "name": "MYST 觅食",
+    "website": "https://myst6400.com/",
     "area": "vancouver",
     "areaLabel": "Vancouver",
     "category": "food",
@@ -473,6 +497,7 @@
   {
     "id": "partner_20",
     "name": "MYST 觅食",
+    "website": "https://myst6400.com/",
     "area": "langley",
     "areaLabel": "Langley",
     "category": "food",
@@ -498,6 +523,7 @@
   {
     "id": "partner_21",
     "name": "添璽（The North Bistro）",
+    "website": "https://www.restaurantji.com/bc/richmond/k-squared-mansion-/",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "food",
@@ -520,6 +546,7 @@
   {
     "id": "partner_22",
     "name": "柠记·手打柠檬茶",
+    "website": "https://www.fantuanorder.com/dianping/zh-CN/store/richmond-1258658977-ca",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "drink",
@@ -543,13 +570,15 @@
   {
     "id": "partner_23",
     "name": "Wren Cafe",
-    "area": "vancouver",
-    "areaLabel": "Vancouver",
+    "website": "https://www.wrencafe.ca/",
+    "area": "downtown",
+    "areaLabel": "Downtown · Vancouver",
     "category": "drink",
     "icon": "🍰",
     "perk": "15% off",
     "shortPerk": "15% off",
     "tags": [
+      "Downtown",
       "Vancouver"
     ],
     "desc": "UBC CSSA 官方合作商家。凭会员卡享：15% off。地址：280 Nelson St, Vancouver, BC V6B 2E2。",
@@ -557,6 +586,8 @@
     "lat": 49.277,
     "lng": -123.1185,
     "aliases": [
+      "市中心",
+      "downtown",
       "wren",
       "wren cafe",
       "咖啡"
@@ -565,6 +596,7 @@
   {
     "id": "partner_24",
     "name": "豆捞坊列治文店",
+    "website": "https://www.dolarshop.com/",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "food",
@@ -589,6 +621,7 @@
   {
     "id": "partner_25",
     "name": "duoduo 酸奶碗",
+    "website": "https://www.fantuanorder.com/zh-CN/store/duo-duo-fruit-shop/ca-16702",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "drink",
@@ -612,6 +645,7 @@
   {
     "id": "partner_26",
     "name": "duoduo 酸奶碗",
+    "website": "https://www.fantuanorder.com/zh-CN/store/duo-duo-fruit-shop/ca-16702",
     "area": "burnaby",
     "areaLabel": "Burnaby",
     "category": "drink",
@@ -635,31 +669,32 @@
   {
     "id": "partner_27",
     "name": "YOYO 低卡工厂 FitBox",
-    "area": "online",
-    "areaLabel": "大温配送",
-    "category": "life",
+    "website": "https://fitboxmeal.ca/",
+    "area": "unconfirmed",
+    "areaLabel": "地址待确认",
+    "category": "food",
     "icon": "🥗",
     "perk": "15% off",
     "shortPerk": "15% off",
     "tags": [
-      "大温配送",
-      "线上订餐"
+      "到店使用",
+      "地址待确认"
     ],
-    "desc": "UBC CSSA 官方合作商家。凭会员卡享：15% off。地址：线上订餐；大温配送（无公开实体店地址）。",
-    "address": "线上订餐；大温配送（无公开实体店地址）",
-    "onlineOnly": true,
+    "desc": "UBC CSSA 官方合作商家。凭会员卡享：15% off。地址：门店地址待确认。",
+    "address": "门店地址待确认",
+    "addressPending": true,
     "aliases": [
       "fitbox",
       "fit box",
       "低卡",
       "meal prep",
-      "轻食",
-      "大温配送"
+      "轻食"
     ]
   },
   {
     "id": "partner_28",
     "name": "Deco Nova K歌之王",
+    "website": "https://deconova.ca/",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "fun",
@@ -685,6 +720,7 @@
   {
     "id": "partner_29",
     "name": "V+Club / V+ Karaoke",
+    "website": "https://vpluskaraoke.ca/",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "fun",
@@ -709,6 +745,7 @@
   {
     "id": "partner_30",
     "name": "桃花坞 Lovin Tea",
+    "website": "https://www.ubereats.com/ca/store/lovin-tea-%E6%A1%83%E8%8A%B1%E5%9D%9E/WT3sqeKkXCCMt_8sArvJgw",
     "area": "richmond",
     "areaLabel": "Richmond",
     "category": "drink",

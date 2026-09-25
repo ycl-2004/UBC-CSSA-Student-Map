@@ -25,7 +25,7 @@
             <div class="card-icon" aria-hidden="true">${html(p.icon)}</div>
             <div class="card-info">
               <div class="name">${html(p.name)}</div>
-              <div class="sub"><span class="badge-area">${html(p.areaLabel.split("·")[0].trim())}</span><span>${p.onlineOnly ? "线上配送" : categoryLabel[p.category]}</span></div>
+              <div class="sub"><span class="badge-area">${html(p.areaLabel.split("·")[0].trim())}</span><span>${categoryLabel[p.category]}</span></div>
             </div>
             <div class="card-perk">${html(p.shortPerk || p.perk)}</div>
           </article>`).join("") : `

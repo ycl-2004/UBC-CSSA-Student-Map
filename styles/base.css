@@ -1,38 +1,49 @@
 :root {
   --cssa-red: #d8262c;
-  --cssa-red-dark: #9f161b;
-  --cssa-red-light: #fff0f1;
+  --cssa-red-hover: #e52d34;
+  --cssa-red-dark: #a1171d;
+  --cssa-red-light: #fff1f2;
+  --cssa-red-tint: #fef2f2;
+  --cssa-red-gradient: linear-gradient(135deg, #e52d34 0%, #b8161c 100%);
+  --cssa-red-glow: 0 4px 16px rgba(216, 38, 44, 0.3);
   --ubc-blue: #002145;
+  --ubc-blue-hover: #003366;
   --ubc-blue-light: #e8eff7;
-  --gold-dark: #a66408;
-  --gold-light: #fff7e6;
-  --ink: #302f38;
-  --ink-soft: #5d5b66;
-  --muted: #706e7a;
-  --paper: #fffdfb;
-  --paper-cream: #fff6ec;
-  --border-warm: #e8dccd;
-  --sea: #cfeaf1;
-  --pin-food: #ed7864;
-  --pin-drink: #53a99b;
-  --pin-fun: #8c75d6;
-  --pin-life: #d99b37;
-  --shadow-sm: 0 3px 8px rgb(74 43 34 / 8%);
-  --shadow-md: 0 12px 28px rgb(74 43 34 / 14%);
-  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --gold-primary: #d97706;
+  --gold-dark: #92400e;
+  --gold-light: #fffbeb;
+  --gold-border: #fcd34d;
+  --gold-gradient: linear-gradient(135deg, #fffdf7 0%, #fef3c7 100%);
+  --ink: #27242c;
+  --ink-soft: #4e4a57;
+  --muted: #747080;
+  --paper: #ffffff;
+  --paper-warm: #fff5f3;
+  --paper-cream: #fff8f6;
+  --border-warm: #efd4d0;
+  --border-subtle: #f2dfdb;
+  --sea: #e3effa;
+  --pin-food: #f05a36;
+  --pin-drink: #10b981;
+  --pin-fun: #8b5cf6;
+  --pin-life: #f59e0b;
+  --shadow-sm: 0 2px 8px rgba(50, 30, 20, 0.06);
+  --shadow-md: 0 8px 24px rgba(50, 30, 20, 0.1);
+  --shadow-lg: 0 16px 36px rgba(50, 30, 20, 0.16);
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body {
   margin: 0;
   color: var(--ink);
   font-family: var(--font);
-  background: #faf6f0 radial-gradient(rgb(145 107 85 / 4%) 1px, transparent 1px) 0 0 / 16px 16px;
+  background: #fff5f2 radial-gradient(rgb(184 69 76 / 9%) 1px, transparent 1px) 0 0 / 16px 16px;
 }
 button, input { font: inherit; }
 button { cursor: pointer; border: 0; background: none; color: inherit; }
 button:disabled { cursor: default; opacity: .6; }
 [hidden] { display: none !important; }
-:where(button, input, [tabindex="0"]):focus-visible { outline: 3px solid #5292c9; outline-offset: 2px; }
+:where(button, a, input, [tabindex="0"]):focus-visible { outline: 3px solid #5292c9; outline-offset: 2px; }
 .app-toast {
   position: fixed; z-index: 2000; left: 50%; bottom: 24px;
   width: max-content; max-width: calc(100% - 32px); padding: 12px 20px;

@@ -2,6 +2,10 @@
 
 大温合作商家地图，支持店名/别名/优惠搜索、分类和区域筛选，以及完整会员优惠详情。使用原生 HTML、CSS、JavaScript 和 Leaflet 1.9.4。
 
+线上地址：<https://ycl-2004.github.io/UBC-CSSA-Student-Map/>。
+
+GitHub Pages 从 `main` 分支根目录发布，后续推送到 `main` 会自动更新网站。`index.html` 跳转至地图入口，`.nojekyll` 保证直接发布静态文件。
+
 ## 打开与开发
 
 可以直接双击 `cssa-map-design-directions.html`。HTML、`src/`、`styles/` 必须一起保留。Leaflet 与底图来自外部服务，需要联网。
@@ -49,9 +53,9 @@ cssa_partner_discounts.csv        原始整理与地址来源快照，不是页�
 - `name`、`address`、`areaLabel`：显示名称、完整地址、区域名称。
 - `perk`：完整优惠；`shortPerk`：列表摘要。摘要应保留折扣数字和主要条件。
 - `category`：`food`、`drink`、`fun` 或 `life`。
-- `area`：`vancouver`、`richmond`、`burnaby`、`ubc`、`surrey`、`coquitlam`、`langley` 或 `online`。
+- `area`：`downtown`、`vancouver`、`richmond`、`burnaby`、`ubc`、`surrey`、`coquitlam`、`langley` 或 `unconfirmed`。
 - `aliases`：中英文名称、简繁体、常用简称；搜索也覆盖地址、优惠与分类。
-- `lat`、`lng`：仅填写已确认的实体店坐标。配送商家使用 `onlineOnly: true`，省略坐标。
+- `lat`、`lng`：仅填写已确认的实体店坐标。地址未确认的商家使用 `addressPending: true`，省略坐标。
 
 CSV 是历史来源记录；修改 CSV 不会自动更新网站。页面以 `partners.js` 为准，避免同时维护两份运行时数据。
 
@@ -77,7 +81,7 @@ node --test tests/search.test.cjs
 
 改 UI 后检查 320×568、320×693、390×844、568×320、768×1024、1024×768 和 1440×900：列表、筛选、详情、长优惠、关闭返回及旋转屏幕。同时检查 `file://` 和 HTTP 两种入口。
 
-改数据后检查“添玺”“skin lab”“柠檬茶”“event food orders of 100+ meals”，以及无结果后的清除筛选。配送商家应可搜索但不产生地图坐标或导航。
+改数据后检查“添玺”“skin lab”“柠檬茶”“event food orders of 100+ meals”，以及无结果后的清除筛选。地址未确认的商家应可搜索但不产生地图坐标或导航。
 
 ## 官方参考
 
@@ -85,3 +89,13 @@ node --test tests/search.test.cjs
 - [原生模块与本地服务器要求](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
 - [原生 dialog 的模态与焦点行为](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog)
 - [Leaflet invalidateSize](https://leafletjs.com/reference.html#map-invalidatesize)
+
+## Downtown 与地图视觉
+
+商圈筛选互斥：`downtown` 单独列出，`vancouver` 表示温哥华其余区域，UBC 继续独立。Downtown 仍属于 Vancouver 市；这是一套找店分组，不是行政区划。基于现有地址，Mainland St 的 Share Tea、Abbott St 的 Tokyo in April、Nelson St 的 Wren Cafe 归入 Downtown；Broadway、Granville St、Kingsway、Renfrew St、W 41st Ave 的店铺保留在 Vancouver。参考 [Vancouver 市政府 Downtown 介绍](https://vancouver.ca/news-calendar/downtown.aspx) 与 [市政府区域边界数据](https://opendata.vancouver.ca/explore/dataset/local-area-boundary/)。本次未复核商家营业状态或重新地理编码。
+
+地图沿用 Esri 真实道路与地名，以 CSS 柔化色彩、添加浅玫瑰色底图叠层；商家标记采用红边贴纸和花形聚合。区域虚线圆仅是视觉提示，不表示正式边界。Downtown 使用主地名标签，Vancouver 标签移到市区中部；区域跳转分别定位。窄屏保留横向滚动区域按钮，底图署名避开底部收起列表。
+
+## 店铺链接与到店规则
+
+`website` 保存 CSV「店铺Link」对应的 HTTP(S) 链接，按店名和地址匹配分店。详情底部的「店铺链接」在新窗口打开，可能指向官网或第三方商家页；不代表线上下单可享会员优惠。统一提示文案为用户指定的「凭店员卡到店使用」。HAKUMORI 已按用户更正改为到店 15% off，取消旧官网折扣码文案。YOYO 暂保留 15% off 与美食分类，地址待确认，禁用导航且不生成坐标。CSV 作为来源快照保留旧优惠与地址描述，运行时以 partners.js 的最新更正为准。

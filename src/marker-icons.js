@@ -29,9 +29,9 @@
     const colors = { food: "#e87864", drink: "#4ba99b", fun: "#8a76d5", life: "#d49a36" };
     const icon = L.divIcon({
       className: "custom-leaflet-marker",
-      html: `<div class="merchant-cluster" style="--cluster-color:${colors[dominantCategory] || "#d8262c"}" aria-label="${group.length} 家店"><span>${group.length}</span></div>`,
-      iconSize: [44, 48],
-      iconAnchor: [22, 38]
+      html: `<div class="merchant-cluster" aria-label="${group.length} 家 CSSA 合作店"><span>${group.length}</span></div>`,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
     });
     const center = L.latLng(
       group.reduce((sum, p) => sum + p.lat, 0) / group.length,

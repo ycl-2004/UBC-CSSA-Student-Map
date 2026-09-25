@@ -39,6 +39,11 @@
     detail.open(partner, fromList);
     map?.focusPartner(partner);
   }
+  function setJumpActive(jumpKey) {
+    document.querySelectorAll("[data-jump]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.jump === jumpKey);
+    });
+  }
   function clearFilters() {
     Object.assign(state, { category: "all", area: "all", query: "" });
     byId("searchInput").value = "";
@@ -46,6 +51,7 @@
       button.setAttribute("aria-pressed", String((button.dataset.cat || button.dataset.area) === "all"));
     });
     byId("activeCategoryHint").textContent = "全部类型";
+    setJumpActive("core");
     render();
     map?.flyToPreset("core");
   }
@@ -59,13 +65,20 @@
   document.querySelectorAll("[data-area]").forEach(button => button.addEventListener("click", () => {
     state.area = button.dataset.area;
     document.querySelectorAll("[data-area]").forEach(other => other.setAttribute("aria-pressed", String(other === button)));
+    setJumpActive(state.area);
     render();
     map?.flyToPreset(state.area);
   }));
-  document.querySelectorAll("[data-jump]").forEach(button => button.addEventListener("click", () => map?.flyToPreset(button.dataset.jump)));
+  document.querySelectorAll("[data-jump]").forEach(button => button.addEventListener("click", () => {
+    setJumpActive(button.dataset.jump);
+    map?.flyToPreset(button.dataset.jump);
+  }));
   byId("btnZoomIn").addEventListener("click", () => map?.zoomIn());
   byId("btnZoomOut").addEventListener("click", () => map?.zoomOut());
-  byId("btnResetView").addEventListener("click", () => map?.flyToPreset("core"));
+  byId("btnResetView").addEventListener("click", () => {
+    setJumpActive("core");
+    map?.flyToPreset("core");
+  });
 
   let toastTimer;
   function showToast(text) {
@@ -87,5 +100,6 @@
   window.visualViewport?.addEventListener("resize", updateViewport);
   window.addEventListener("resize", updateViewport);
   updateViewport();
+  setJumpActive("core");
   render();
 })();
