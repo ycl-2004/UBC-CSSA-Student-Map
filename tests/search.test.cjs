@@ -75,3 +75,13 @@ test('short latin tokens and global club terms do not cause false positives', ()
 
   assert.equal(search('cssa').length, 0);
 });
+
+test('area filtering correctly partitions merchants across all presets', () => {
+  assert.equal(search('', { area: 'all' }).length, 30);
+  assert.ok(search('', { area: 'ubc' }).length > 0);
+  assert.ok(search('', { area: 'downtown' }).length > 0);
+  assert.ok(search('', { area: 'vancouver' }).length > 0);
+  assert.ok(search('', { area: 'richmond' }).length > 0);
+  assert.ok(search('', { area: 'burnaby' }).length > 0);
+  assert.ok(search('', { area: 'outer' }).length > 0);
+});

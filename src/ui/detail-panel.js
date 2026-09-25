@@ -2,33 +2,39 @@
   "use strict";
   const { byId, escapeHtml: html, mobileLayout } = window.CSSAMap;
 
-  function createDetailPanel(onClose) {
+  function createDetailPanel(onClose, onViewOnMap) {
     const dialog = byId("detailCard"), main = document.querySelector(".app-main");
-    const close = byId("btnCloseDetail"), website = byId("shopLink"), nav = byId("btnNavMaps");
+    const close = byId("btnCloseDetail"), website = byId("shopLink"), nav = byId("btnNavMaps"), viewOnMap = byId("btnViewOnMap");
     let selected = null, returnTarget = null;
 
-  function present() {
+    function present() {
       // Native modal dialogs supply focus containment and inert backgrounds on mobile.
       // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
       if (dialog.open) dialog.close();
       if (mobileLayout.matches) dialog.showModal();
       else dialog.show();
-  }
-  close.addEventListener("click", () => dialog.close());
-  dialog.addEventListener("keydown", event => {
-    if (event.key !== "Tab" || !dialog.matches(":modal")) return;
-    const stops = [close, byId("detailBody"), nav, website]
-      .filter(element => !element.disabled && !element.hidden);
-    const first = stops[0], last = stops.at(-1), active = document.activeElement;
-    if (event.shiftKey && (active === first || !dialog.contains(active))) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && (active === last || !dialog.contains(active))) {
-      event.preventDefault();
-      first.focus();
     }
-  });
-  dialog.addEventListener("click", event => {
+    close.addEventListener("click", () => dialog.close());
+    viewOnMap?.addEventListener("click", () => {
+      if (!selected || selected.addressPending || !selected.lat || !selected.lng) return;
+      const target = selected;
+      dialog.close();
+      onViewOnMap?.(target);
+    });
+    dialog.addEventListener("keydown", event => {
+      if (event.key !== "Tab" || !dialog.matches(":modal")) return;
+      const stops = [close, byId("detailBody"), viewOnMap, nav, website]
+        .filter(element => element && !element.disabled && !element.hidden);
+      const first = stops[0], last = stops.at(-1), active = document.activeElement;
+      if (event.shiftKey && (active === first || !dialog.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || !dialog.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+    dialog.addEventListener("click", event => {
       const r = dialog.getBoundingClientRect();
       if (mobileLayout.matches && event.target === dialog &&
           (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)) dialog.close();
@@ -38,7 +44,7 @@
       if (dialog.open) return;
       main.classList.remove("detail-open");
       selected = null;
-      onClose();
+      onClose?.();
       if (returnTarget?.isConnected) returnTarget.focus({ preventScroll: true });
     });
     document.addEventListener("keydown", event => {
@@ -58,6 +64,11 @@
         byId("cardArea").textContent = partner.address;
         byId("cardPerk").textContent = partner.perk.replace(/[；;]/g, "\n").trim();
         byId("cardTags").innerHTML = partner.tags.map(tag => `<span class="tag-badge">#${html(tag)}</span>`).join("");
+        if (viewOnMap) {
+          const hasCoords = !partner.addressPending && partner.lat && partner.lng;
+          viewOnMap.disabled = !hasCoords;
+          viewOnMap.textContent = hasCoords ? "🗺️ 在地图上看" : "无实体坐标";
+        }
         nav.disabled = !!partner.addressPending || !partner.lat || !partner.lng;
         nav.textContent = nav.disabled ? "地址待确认" : "📍 导航路线";
         const validLink = /^https?:\/\//i.test(partner.website || "");
@@ -68,6 +79,9 @@
         main.classList.add("detail-open");
         present();
         byId("detailBody").scrollTop = 0;
+      },
+      close() {
+        if (dialog.open) dialog.close();
       }
     };
   }

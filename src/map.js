@@ -4,7 +4,7 @@
   const { createStickerIcon, addCluster } = window.CSSAMap;
   const L = window.L;
 
-  function createPartnerMap(partners, onSelect) {
+  function createPartnerMap(partners, onSelect, onDeselect) {
     const map = L.map("leafletMap", {
       center: [49.2350, -123.1250],
       zoom: 11,
@@ -14,6 +14,10 @@
       zoomControl: false,
       attributionControl: true,
       fadeAnimation: false
+    });
+
+    map.on("click", () => {
+      onDeselect?.();
     });
 
     // Esri World Topo Map
@@ -67,7 +71,35 @@
       });
     }
 
+    let hoveredPinEl = null;
+    let savedZIndex = "";
+
+    function hoverPartner(id) {
+      if (hoveredPinEl) {
+        hoveredPinEl.classList.remove("hovered");
+        const parentMarker = hoveredPinEl.closest(".leaflet-marker-icon");
+        if (parentMarker) parentMarker.style.zIndex = savedZIndex;
+        hoveredPinEl = null;
+        savedZIndex = "";
+      }
+      if (!id) return;
+      const pin = document.querySelector(`.merchant-sticker-pin[data-id="${id}"]`);
+      if (pin) {
+        pin.classList.add("hovered");
+        const parentMarker = pin.closest(".leaflet-marker-icon");
+        if (parentMarker) {
+          savedZIndex = parentMarker.style.zIndex || "";
+          parentMarker.style.zIndex = "999";
+        }
+        hoveredPinEl = pin;
+      }
+    }
+
     function renderMarkers(visible) {
+      if (hoveredPinEl) {
+        hoveredPinEl = null;
+        savedZIndex = "";
+      }
       markerGroup.clearLayers();
       const zoom = map.getZoom();
       const mapBounds = map.getBounds().pad(0.12);
@@ -142,6 +174,7 @@
       focusPartner(partner) {
         if (partner.lat && partner.lng) map.flyTo([partner.lat, partner.lng], 15, { duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.8 });
       },
+      hoverPartner,
       flyToPreset,
       zoomIn: () => map.zoomIn(),
       zoomOut: () => map.zoomOut()

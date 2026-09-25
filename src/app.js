@@ -9,15 +9,28 @@
 
   const state = { category: "all", area: "all", query: "", selectedId: null };
   let visible = partners;
-  const list = createPartnerList(selectPartner, clearFilters);
-  createDrawer();
-  const detail = createDetailPanel(() => {
+  const list = createPartnerList(selectPartner, clearFilters, id => map?.hoverPartner(id));
+  const drawer = createDrawer();
+  const detail = createDetailPanel(
+    () => {
+      // Do not clear selectedId on close to allow user to locate the pin on the map.
+    },
+    target => {
+      drawer.setExpanded(false);
+      map?.focusPartner(target);
+    }
+  );
+
+  function deselectPartner() {
+    if (!state.selectedId) return;
     state.selectedId = null;
     list.select(null);
     map?.update(visible, null);
-  });
+    detail.close();
+  }
+
   // Keep search and the merchant list useful even if the external map library fails.
-  const map = window.L ? createPartnerMap(partners, selectPartner) : null;
+  const map = window.L ? createPartnerMap(partners, selectPartner, deselectPartner) : null;
   if (!map) {
     byId("mapUnavailable").hidden = false;
     document.querySelectorAll(".map-controls button, [data-jump]").forEach(button => button.disabled = true);
@@ -25,6 +38,10 @@
 
   function render() {
     visible = filterPartners(partners, state);
+    if (state.selectedId && !visible.some(p => p.id === state.selectedId)) {
+      state.selectedId = null;
+      detail.close();
+    }
     list.render(visible, state.selectedId);
     map?.update(visible, state.selectedId);
     const count = Number(state.category !== "all") + Number(state.area !== "all");
@@ -44,14 +61,26 @@
       btn.classList.toggle("active", btn.dataset.jump === jumpKey);
     });
   }
+  function selectArea(areaKey, jumpPreset = null) {
+    const targetArea = (areaKey === "core" || areaKey === "all") ? "all" : areaKey;
+    const targetJump = jumpPreset || (areaKey === "all" ? "core" : areaKey);
+    state.area = targetArea;
+    document.querySelectorAll("[data-area]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.area === targetArea));
+    });
+    setJumpActive(targetJump);
+    render();
+    map?.flyToPreset(targetJump);
+  }
   function clearFilters() {
-    Object.assign(state, { category: "all", area: "all", query: "" });
+    Object.assign(state, { category: "all", area: "all", query: "", selectedId: null });
     byId("searchInput").value = "";
     document.querySelectorAll("[data-cat], [data-area]").forEach(button => {
       button.setAttribute("aria-pressed", String((button.dataset.cat || button.dataset.area) === "all"));
     });
     byId("activeCategoryHint").textContent = "全部类型";
     setJumpActive("core");
+    detail.close();
     render();
     map?.flyToPreset("core");
   }
@@ -63,21 +92,15 @@
     render();
   }));
   document.querySelectorAll("[data-area]").forEach(button => button.addEventListener("click", () => {
-    state.area = button.dataset.area;
-    document.querySelectorAll("[data-area]").forEach(other => other.setAttribute("aria-pressed", String(other === button)));
-    setJumpActive(state.area);
-    render();
-    map?.flyToPreset(state.area);
+    selectArea(button.dataset.area, button.dataset.area === "all" ? "core" : button.dataset.area);
   }));
   document.querySelectorAll("[data-jump]").forEach(button => button.addEventListener("click", () => {
-    setJumpActive(button.dataset.jump);
-    map?.flyToPreset(button.dataset.jump);
+    selectArea(button.dataset.jump, button.dataset.jump);
   }));
   byId("btnZoomIn").addEventListener("click", () => map?.zoomIn());
   byId("btnZoomOut").addEventListener("click", () => map?.zoomOut());
   byId("btnResetView").addEventListener("click", () => {
-    setJumpActive("core");
-    map?.flyToPreset("core");
+    selectArea("core", "core");
   });
 
   let toastTimer;

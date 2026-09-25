@@ -3,7 +3,7 @@
   const { byId, escapeHtml: html, mobileLayout } = window.CSSAMap;
   const { categoryLabel } = window.CSSAMap;
 
-  function createPartnerList(onSelect, onClear) {
+  function createPartnerList(onSelect, onClear, onHover) {
     const list = byId("partnerList");
     function activate(event) {
       if (event.type === "keydown" && !["Enter", " "].includes(event.key)) return;
@@ -17,6 +17,23 @@
       else activate(event);
     });
     list.addEventListener("keydown", activate);
+    let currentHoverId = null;
+    list.addEventListener("pointerover", event => {
+      if (event.pointerType !== "mouse") return;
+      const card = event.target.closest(".partner-card[data-id]");
+      const id = card ? card.dataset.id : null;
+      if (id !== currentHoverId) {
+        currentHoverId = id;
+        onHover?.(id);
+      }
+    });
+    list.addEventListener("pointerleave", event => {
+      if (event.pointerType !== "mouse") return;
+      if (currentHoverId !== null) {
+        currentHoverId = null;
+        onHover?.(null);
+      }
+    });
     return {
       render(partners, selectedId) {
         byId("partnerCount").textContent = partners.length;
