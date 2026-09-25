@@ -1,6 +1,6 @@
 # CSSA map maintenance
 
-- Read README.md for the file map, local startup, and data ownership.
+- Read DEVELOPMENT.md for the file map, local startup, and data ownership.
 - Keep the app usable from both file:// and an HTTP static server. Classic defer scripts have an explicit dependency order in the HTML entry.
 - Keep merchant content in src/data/partners.js. CSV is a source snapshot, not runtime input. Never invent coordinates for delivery-only merchants.
 - Keep CSS in styles/ and behavior in the corresponding src/ module. Avoid adding inline handlers/styles or rebuilding a single-file app.
