@@ -1,0 +1,2346 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#d8262c">
+  <title>UBC CSSA · 大温手绘风真实会员福利地图</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <style>
+    :root {
+      --cssa-red: #d8262c;
+      --cssa-red-dark: #9f161b;
+      --cssa-red-light: #fff0f1;
+      --ubc-blue: #002145;
+      --ubc-blue-light: #e8eff7;
+      --gold: #f5a623;
+      --gold-dark: #b87408;
+      --gold-light: #fff7e6;
+      --ink: #3c2f2d;
+      --ink-soft: #63524e;
+      --muted: #8c7a74;
+      --paper: #fffefb;
+      --paper-cream: #faf4ea;
+      --border-warm: #ebdccb;
+      --sea: #d8ebe8;
+      --shadow-sm: 0 3px 8px rgba(74, 43, 34, 0.08);
+      --shadow-md: 0 12px 28px rgba(74, 43, 34, 0.14);
+      --shadow-stamp: 2px 3px 0 rgba(159, 22, 27, 0.2);
+      --font-rounded: ui-rounded, "Hiragino Maru Gothic ProN", "PingFang SC Rounded", "M PLUS Rounded 1c", "YouYuan", system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #f7f1e6;
+      background-image: radial-gradient(rgba(145, 107, 85, 0.07) 1px, transparent 1px);
+      background-size: 10px 10px;
+      font-family: var(--font-rounded);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    button, input { font-family: inherit; }
+    button { cursor: pointer; border: 0; background: none; }
+
+    /* Page Layout */
+    .page {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 14px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Site Header */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: var(--paper);
+      padding: 12px 18px;
+      border: 2px solid var(--border-warm);
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .seal-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px 14px 11px 15px;
+      background: var(--cssa-red);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 19px;
+      font-weight: 900;
+      box-shadow: var(--shadow-stamp);
+      transform: rotate(-3deg);
+      border: 2px solid #fff;
+      position: relative;
+    }
+    .seal-badge:after {
+      content: "UBC";
+      position: absolute;
+      bottom: -6px;
+      right: -6px;
+      font-size: 8px;
+      background: var(--ubc-blue);
+      color: #fff;
+      padding: 1px 4px;
+      border-radius: 4px;
+      border: 1px solid #fff;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-info h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--cssa-red-dark);
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-info .tagline {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-info .tagline span.pill {
+      background: var(--gold-light);
+      color: var(--gold-dark);
+      border: 1px solid var(--gold);
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1.5px solid var(--cssa-red);
+      background: #fff;
+      color: var(--cssa-red);
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      box-shadow: 1px 2px 0 rgba(216, 38, 44, 0.15);
+    }
+    .header-btn:hover {
+      background: var(--cssa-red);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .header-btn.primary {
+      background: var(--cssa-red);
+      color: #fff;
+    }
+    .header-btn.primary:hover {
+      background: var(--cssa-red-dark);
+    }
+
+    /* Main Container (Desktop Side by Side) */
+    .app-main {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      min-height: 520px;
+      height: min(780px, calc(100dvh - 136px));
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      background: var(--paper);
+      border: 2px solid var(--border-warm);
+      border-radius: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sidebar-header {
+      padding: 16px 18px 12px;
+      border-bottom: 2px dashed var(--border-warm);
+      background: #fffdf9;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1.5px solid var(--border-warm);
+      border-radius: 14px;
+      padding: 9px 12px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+      transition: border-color 0.2s;
+    }
+    .search-bar:focus-within {
+      border-color: var(--cssa-red);
+      box-shadow: 0 0 0 3px rgba(216, 38, 44, 0.12);
+    }
+    .search-bar input {
+      border: 0;
+      outline: 0;
+      font-size: 12px;
+      color: var(--ink);
+      width: 100%;
+      background: transparent;
+    }
+    .search-bar input::placeholder { color: #b09e96; }
+
+    /* Filter Section */
+    .filter-section {
+      padding: 11px 18px 7px;
+      border-bottom: 1px dashed var(--border-warm);
+      background: var(--paper-cream);
+    }
+    .filter-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chip-scroll {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .filter-chip {
+      padding: 5px 10px;
+      border-radius: 10px 14px 11px 13px;
+      border: 1.5px solid var(--border-warm);
+      background: #fff;
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 750;
+      transition: all 0.16s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .filter-chip:hover {
+      border-color: var(--cssa-red);
+      transform: translateY(-1px);
+    }
+    .filter-chip[aria-pressed="true"] {
+      background: var(--cssa-red);
+      color: #fff;
+      border-color: var(--cssa-red-dark);
+      box-shadow: var(--shadow-stamp);
+      transform: rotate(-1deg);
+    }
+
+    /* Partner List */
+    .list-meta {
+      padding: 9px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      background: #fff;
+    }
+    .list-meta strong {
+      color: var(--cssa-red-dark);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .partner-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .partner-scroll::-webkit-scrollbar { width: 5px; }
+    .partner-scroll::-webkit-scrollbar-thumb { background: #dfcebd; border-radius: 99px; }
+
+    .partner-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1.5px solid var(--border-warm);
+      border-radius: 16px;
+      text-align: left;
+      transition: all 0.18s cubic-bezier(0.2, 0.8, 0.4, 1);
+      position: relative;
+    }
+    .partner-card:hover {
+      border-color: #e8a9a4;
+      background: var(--cssa-red-light);
+      transform: translateX(3px);
+    }
+    .partner-card.active {
+      border-color: var(--cssa-red);
+      background: #fff7f7;
+      box-shadow: 0 4px 14px rgba(216, 38, 44, 0.15);
+      border-left: 5px solid var(--cssa-red);
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      background: #fff4e8;
+      border: 1.5px solid #f0dec9;
+      flex-shrink: 0;
+    }
+    .card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-info .name {
+      font-size: 13px;
+      font-weight: 850;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-info .sub {
+      margin-top: 2px;
+      font-size: 10px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .badge-area {
+      background: #f1ebd9;
+      color: #6d5b51;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+    .card-perk {
+      flex-shrink: 0;
+      padding: 4px 8px;
+      background: var(--gold-light);
+      border: 1.5px dashed var(--gold);
+      border-radius: 8px;
+      color: var(--gold-dark);
+      font-size: 10px;
+      font-weight: 900;
+      transform: rotate(-1.5deg);
+    }
+
+    /* Map Stage (Real Leaflet Map with Watercolor/Paper Filter) */
+    .map-stage {
+      position: relative;
+      border: 2px solid var(--border-warm);
+      border-radius: 24px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    #leafletMap {
+      width: 100%;
+      height: 100%;
+      background: var(--sea);
+      z-index: 1;
+    }
+
+    /* Watercolor / Warm Paper Map Tile Filter */
+    .leaflet-tile-pane {
+      filter: sepia(0.24) saturate(1.2) hue-rotate(-10deg) contrast(0.97) brightness(1.02);
+    }
+
+    /* Subtle Paper Texture Overlay on Top of Map */
+    .map-paper-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(145, 107, 85, 0.04) 1px, transparent 1px);
+      background-size: 8px 8px;
+      pointer-events: none;
+      z-index: 400;
+    }
+
+    /* Quick Area Jump Tabs (UBC, Van, Richmond, Burnaby) */
+    .area-quick-bar {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 253, 248, 0.95);
+      padding: 6px;
+      border-radius: 16px;
+      border: 1.5px solid var(--border-warm);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(8px);
+    }
+    .quick-title {
+      font-size: 10px;
+      font-weight: 850;
+      color: var(--cssa-red-dark);
+      padding: 0 6px;
+      border-right: 1px dashed var(--border-warm);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .quick-jump-btn {
+      padding: 5px 9px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ink-soft);
+      background: #fff;
+      border: 1px solid var(--border-warm);
+      transition: all 0.16s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .quick-jump-btn:hover {
+      background: var(--cssa-red-light);
+      border-color: var(--cssa-red);
+      color: var(--cssa-red);
+    }
+    .quick-jump-btn.ubc-pill {
+      background: var(--ubc-blue-light);
+      color: var(--ubc-blue);
+      border-color: #bed0e6;
+    }
+    .quick-jump-btn.ubc-pill:hover {
+      background: var(--ubc-blue);
+      color: #fff;
+    }
+
+    /* Map Controls (Top Right) */
+    .map-controls {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .ctrl-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--paper);
+      border: 2px solid var(--border-warm);
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.16s ease;
+    }
+    .ctrl-btn:hover {
+      background: var(--cssa-red-light);
+      border-color: var(--cssa-red);
+      color: var(--cssa-red);
+      transform: scale(1.05);
+    }
+    .ctrl-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Custom Leaflet Sticker Marker Styles */
+    .custom-leaflet-marker {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .merchant-sticker-pin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translate(-50%, -100%);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .merchant-sticker-pin:hover {
+      transform: translate(-50%, -105%) scale(1.1);
+    }
+    .merchant-sticker-pin.active {
+      transform: translate(-50%, -108%) scale(1.18);
+      z-index: 9999 !important;
+    }
+
+    .pin-bubble {
+      background: #fff;
+      border: 2.5px solid #fff;
+      border-radius: 18px 20px 17px 22px;
+      box-shadow: 0 4px 10px rgba(60, 30, 20, 0.18), 0 1px 2px rgba(60, 30, 20, 0.08);
+      padding: 4px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s ease;
+    }
+    .merchant-sticker-pin.active .pin-bubble {
+      border-color: var(--cssa-red);
+      box-shadow: 0 0 0 3px rgba(216, 38, 44, 0.25), 0 8px 18px rgba(216, 38, 44, 0.2);
+      animation: sticker-bounce 0.4s ease;
+    }
+
+    .pin-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      background: var(--paper-cream);
+    }
+    .merchant-sticker-pin.active .pin-icon {
+      background: var(--cssa-red-light);
+    }
+
+    .pin-tail {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid #fff;
+      margin-top: -1px;
+      filter: drop-shadow(0 2px 1px rgba(0,0,0,0.1));
+    }
+    .merchant-sticker-pin.active .pin-tail {
+      border-top-color: var(--cssa-red);
+    }
+
+    .pin-caption {
+      margin-top: 3px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      font-size: 10px;
+      font-weight: 850;
+      padding: 3px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-warm);
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      pointer-events: none;
+    }
+    .merchant-sticker-pin.active .pin-caption {
+      background: var(--cssa-red);
+      color: #fff;
+      border-color: var(--cssa-red-dark);
+    }
+
+    .pin-sparkle {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 14px;
+      display: none;
+    }
+    .merchant-sticker-pin.active .pin-sparkle {
+      display: block;
+      animation: spin-pulse 1.2s infinite alternate;
+    }
+
+    /* Cute Landmark Badges on Map */
+    .landmark-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid var(--border-warm);
+      padding: 4px 9px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 850;
+      color: var(--ink-soft);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .landmark-badge.ubc {
+      background: var(--ubc-blue);
+      color: #fff;
+      border: 2px solid #fff;
+      font-size: 11px;
+      transform: translate(-50%, -50%) rotate(-2deg);
+      box-shadow: 0 4px 12px rgba(0, 33, 69, 0.3);
+    }
+
+    @keyframes sticker-bounce {
+      0% { transform: scale(0.8) rotate(-6deg); }
+      60% { transform: scale(1.15) rotate(4deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+    @keyframes spin-pulse {
+      0% { transform: scale(0.9) rotate(-10deg); }
+      100% { transform: scale(1.2) rotate(15deg); }
+    }
+
+    /* Detail Modal / Floating Card on Desktop */
+    .detail-card {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: 320px;
+      background: var(--paper);
+      border: 2px solid var(--border-warm);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      padding: 16px;
+      z-index: 600;
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.18, 0.84, 0.28, 1.1);
+    }
+    .detail-card.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+    }
+    .detail-large-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      background: var(--cssa-red-light);
+      border: 2px solid #fedbdc;
+      flex-shrink: 0;
+    }
+    .detail-title-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+    .detail-eyebrow {
+      font-size: 9px;
+      font-weight: 850;
+      color: var(--cssa-red);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .detail-name {
+      margin: 2px 0 3px;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .detail-location-str {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .close-card-btn {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1.5px solid var(--border-warm);
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+    }
+    .close-card-btn:hover {
+      background: var(--cssa-red-light);
+      color: var(--cssa-red);
+    }
+
+    .detail-perk-box {
+      margin: 12px 0 10px;
+      padding: 10px 12px;
+      background: var(--gold-light);
+      border: 1.5px dashed var(--gold);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .perk-box-title {
+      font-size: 10px;
+      color: var(--gold-dark);
+      font-weight: 800;
+    }
+    .perk-box-sub {
+      font-size: 9px;
+      color: #92692e;
+      margin-top: 1px;
+    }
+    .perk-box-value {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--cssa-red-dark);
+      letter-spacing: 0.02em;
+    }
+
+    .detail-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .tag-badge {
+      background: #f4ede4;
+      color: var(--ink-soft);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .detail-desc {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+      margin: 0 0 12px;
+    }
+
+    .detail-actions-row {
+      display: flex;
+      gap: 8px;
+    }
+    .detail-btn {
+      flex: 1;
+      padding: 9px;
+      border-radius: 11px;
+      font-size: 11px;
+      font-weight: 850;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.16s ease;
+    }
+    .detail-btn.sub {
+      background: #fff;
+      border: 1.5px solid var(--border-warm);
+      color: var(--ink-soft);
+    }
+    .detail-btn.sub:hover {
+      border-color: var(--cssa-red);
+      color: var(--cssa-red);
+    }
+    .detail-btn.main {
+      background: var(--cssa-red);
+      color: #fff;
+      border: 1.5px solid var(--cssa-red-dark);
+      box-shadow: 0 2px 6px rgba(216, 38, 44, 0.25);
+    }
+    .detail-btn.main:hover {
+      background: var(--cssa-red-dark);
+    }
+
+    /* Map Navigation Hint Pill */
+    .map-hint-pill {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      z-index: 500;
+      background: rgba(255, 253, 248, 0.94);
+      border: 1.5px dashed var(--border-warm);
+      border-radius: 12px;
+      padding: 7px 12px;
+      font-size: 11px;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(4px);
+    }
+    .map-hint-pill b { color: var(--cssa-red); }
+
+    /* Toast Notification */
+    .app-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 30px;
+      transform: translate(-50%, 20px);
+      background: var(--cssa-red-dark);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 8px 24px rgba(159, 22, 27, 0.3);
+      border: 2px solid #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.22s cubic-bezier(0.18, 0.84, 0.28, 1);
+      z-index: 9999;
+    }
+    .app-toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    /* Hide Leaflet Default UI clutter */
+    .leaflet-control-zoom { display: none !important; }
+    .leaflet-control-attribution {
+      font-size: 8px !important;
+      background: rgba(255, 255, 255, 0.7) !important;
+      color: #9c8e87 !important;
+      border-radius: 4px;
+      margin: 4px 6px !important;
+    }
+
+    /* Mobile Responsive Layout & Bottom Sheet (<= 860px) */
+    @media (max-width: 860px) {
+      body { overflow: hidden; height: 100vh; }
+      .page { padding: 8px 8px 0; gap: 8px; height: 100vh; }
+      
+      .site-header { padding: 8px 12px; border-radius: 16px; }
+      .seal-badge { width: 36px; height: 36px; font-size: 16px; }
+      .brand-info h1 { font-size: 14px; }
+      .brand-info .tagline { font-size: 9px; }
+      .header-btn span.btn-text { display: none; }
+      .header-btn { padding: 6px 10px; font-size: 12px; }
+
+      .app-main {
+        grid-template-columns: 1fr;
+        height: calc(100vh - 72px);
+        min-height: 0;
+        position: relative;
+        gap: 0;
+      }
+
+      .map-stage {
+        height: 100%;
+        border-radius: 18px 18px 0 0;
+      }
+
+      .area-quick-bar {
+        top: 10px;
+        left: 10px;
+        padding: 4px;
+        max-width: calc(100% - 70px);
+        overflow-x: auto;
+      }
+      .quick-title { display: none; }
+      .quick-jump-btn { font-size: 10px; padding: 4px 7px; white-space: nowrap; }
+      .map-controls { top: 10px; right: 10px; gap: 5px; }
+      .ctrl-btn { width: 34px; height: 34px; font-size: 14px; }
+      .map-hint-pill { display: none; }
+
+      /* Bottom Sheet Drawer for Sidebar on Mobile */
+      .sidebar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 800;
+        border-radius: 22px 22px 0 0;
+        border: 2px solid var(--border-warm);
+        border-bottom: 0;
+        box-shadow: 0 -8px 24px rgba(60, 30, 20, 0.16);
+        background: #fffdf9;
+        transition: transform 0.3s cubic-bezier(0.2, 0.85, 0.32, 1);
+        transform: translateY(calc(100% - 72px)); /* Peek height */
+        max-height: 82vh;
+        height: 82vh;
+      }
+
+      .sidebar.sheet-expanded {
+        transform: translateY(0);
+      }
+      .sidebar.sheet-half {
+        transform: translateY(48%);
+      }
+
+      .drawer-handle-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 0 4px;
+        cursor: pointer;
+      }
+      .drawer-pill {
+        width: 44px;
+        height: 5px;
+        border-radius: 99px;
+        background: #dbcbba;
+      }
+      .drawer-status-hint {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--cssa-red);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .sidebar-header { padding: 6px 14px 10px; }
+      .filter-section { padding: 8px 14px 6px; }
+      .chip-scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+      .partner-scroll { padding: 8px 12px 60px; }
+
+      .detail-card {
+        right: 10px;
+        bottom: 84px;
+        left: 10px;
+        width: auto;
+        border-radius: 18px;
+        z-index: 900;
+      }
+    }
+
+    @media (min-width: 861px) {
+      .drawer-handle-bar { display: none; }
+    }
+
+    /* Readability and map-first visual refresh */
+    :root {
+      --font-rounded: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --ink: #302f38;
+      --ink-soft: #5d5b66;
+      --muted: #706e7a;
+      --paper: #fffdfb;
+      --paper-cream: #fff6ec;
+      --border-warm: #e8dccd;
+      --sea: #cfeaf1;
+      --pin-food: #ed7864;
+      --pin-drink: #53a99b;
+      --pin-fun: #8c75d6;
+      --pin-life: #d99b37;
+    }
+
+    body {
+      font-family: var(--font-rounded);
+      background-color: #faf6f0;
+      background-image: radial-gradient(rgba(145, 107, 85, 0.035) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+
+    .site-header { padding: 14px 20px; border-width: 1px; border-radius: 18px; }
+    .brand-title-mobile { display: none; }
+    .brand-info h1 { font-size: 19px; font-weight: 750; letter-spacing: 0; }
+    .brand-info .tagline { font-size: 12px; line-height: 1.4; }
+    .brand-info .tagline span.pill { font-size: 11px; padding: 3px 8px; }
+    .header-btn { font-size: 13px; font-weight: 700; padding: 9px 14px; box-shadow: none; }
+    .search-bar { min-height: 46px; border-width: 1px; border-radius: 13px; }
+    .search-bar input { font-size: 14px; }
+    .search-bar input::placeholder { color: #77737e; }
+    .filter-label { font-size: 12px; letter-spacing: 0; }
+    .filter-chip { font-size: 12px; font-weight: 650; padding: 7px 10px; border-width: 1px; }
+    .list-meta { font-size: 12px; padding: 11px 18px; }
+    .list-meta strong { font-size: 14px; font-weight: 700; }
+    .partner-scroll { padding: 12px; gap: 8px; }
+    .partner-card {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-content: start;
+      gap: 8px 10px;
+      flex: 0 0 auto;
+      min-height: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border-warm);
+      border-radius: 15px;
+      box-shadow: none;
+    }
+    .partner-card:hover { transform: translateY(-1px); }
+    .partner-card.active { border-left: 4px solid var(--cssa-red); }
+    .card-icon { grid-column: 1; grid-row: 1 / 3; align-self: start; width: 42px; height: 42px; border-radius: 14px; font-size: 21px; }
+    .card-info { grid-column: 2; grid-row: 1; min-width: 0; }
+    .partner-card[data-category="food"] .card-icon { background: #fff0eb; border-color: #f1c4b8; }
+    .partner-card[data-category="drink"] .card-icon { background: #e8f5f1; border-color: #c5e4da; }
+    .partner-card[data-category="fun"] .card-icon { background: #f0edff; border-color: #d7d0f4; }
+    .partner-card[data-category="life"] .card-icon { background: #fff4dc; border-color: #efddb0; }
+    .card-info .name { font-size: 15px; font-weight: 700; line-height: 1.3; }
+    .card-info .sub { margin-top: 4px; font-size: 12px; line-height: 1.25; }
+    .badge-area { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 5px; }
+    .card-perk {
+      grid-column: 2;
+      grid-row: 2;
+      justify-self: start;
+      align-self: start;
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      padding: 5px 9px;
+      border: 1px solid #edca78;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 700;
+      transform: none;
+    }
+    .detail-card {
+      width: min(360px, calc(100% - 32px));
+      max-height: min(68vh, 560px);
+      overflow-y: auto;
+      border-width: 1px;
+      border-radius: 18px;
+    }
+    .detail-name { font-size: 18px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+    .detail-location-str { display: block; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+    .detail-perk-box { display: block; border-style: solid; border-color: #eedb9c; }
+    .perk-box-title { font-size: 12px; }
+    .perk-box-sub { font-size: 12px; }
+    .perk-box-value { display: block; margin-top: 8px; font-size: 14px; line-height: 1.55; font-weight: 650; white-space: pre-line; overflow-wrap: anywhere; }
+    .detail-desc { font-size: 13px; line-height: 1.55; }
+    .detail-btn { min-height: 42px; font-size: 13px; font-weight: 650; }
+    .tag-badge { font-size: 12px; padding: 4px 8px; }
+    .map-stage { border-width: 1px; border-radius: 20px; }
+    .leaflet-tile-pane { filter: saturate(1.45) brightness(1.04); }
+    #leafletMap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 350;
+      pointer-events: none;
+      background: linear-gradient(130deg, rgba(255, 225, 212, 0.18), rgba(215, 241, 233, 0.14) 52%, rgba(230, 222, 249, 0.16));
+    }
+    .map-paper-overlay { display: none; }
+    .leaflet-control-attribution {
+      font-size: 9px !important;
+      color: #514e5a !important;
+      background: rgba(255, 255, 255, 0.9) !important;
+    }
+    .area-quick-bar { border-width: 1px; border-radius: 15px; }
+    .quick-title { font-size: 12px; font-weight: 700; }
+    .quick-jump-btn { font-size: 12px; font-weight: 650; padding: 7px 10px; }
+    .ctrl-btn { border-width: 1px; border-radius: 12px; box-shadow: 0 2px 6px rgba(53, 57, 71, 0.12); }
+    .merchant-sticker-pin { transition: transform 0.16s ease; }
+    .merchant-sticker-pin:hover { transform: translate(-50%, -100%) scale(1.08); }
+    .pin-bubble { border: 3px solid #fff; border-radius: 50%; padding: 3px; box-shadow: 0 3px 10px rgba(47, 48, 58, 0.22); }
+    .pin-icon { width: 32px; height: 32px; border-radius: 50%; font-size: 18px; background: #fff; }
+    .merchant-sticker-pin.category-food .pin-icon { background: #fff0eb; }
+    .merchant-sticker-pin.category-drink .pin-icon { background: #e5f5ef; }
+    .merchant-sticker-pin.category-fun .pin-icon { background: #efedff; }
+    .merchant-sticker-pin.category-life .pin-icon { background: #fff4dc; }
+    .merchant-sticker-pin.active .pin-bubble { border-color: var(--cssa-red); box-shadow: 0 0 0 4px rgba(216, 38, 44, 0.2), 0 6px 14px rgba(47, 48, 58, 0.2); }
+    .pin-caption { display: none; max-width: 170px; overflow: hidden; text-overflow: ellipsis; font-size: 12px; font-weight: 650; box-shadow: 0 2px 7px rgba(47, 48, 58, 0.15); }
+    .merchant-sticker-pin.active .pin-caption,
+    .merchant-sticker-pin.show-label .pin-caption { display: block; }
+    .pin-sparkle { display: none !important; }
+    .merchant-cluster {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 3px solid #fff;
+      border-radius: 50% 50% 50% 16px;
+      background: var(--cluster-color, var(--cssa-red));
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(47, 48, 58, 0.22);
+      font-size: 15px;
+      font-weight: 800;
+      transform: rotate(-8deg);
+    }
+    .merchant-cluster span { transform: rotate(8deg); }
+    .landmark-badge { display: inline-block; padding: 5px 10px; color: #433b42; font-size: 13px; font-weight: 750; border: 1px solid #fff; border-radius: 10px 13px 10px 12px; box-shadow: 0 2px 5px rgba(47, 48, 58, 0.12); background: #fff; white-space: nowrap; }
+    .landmark-badge.major { padding: 7px 12px; font-size: 15px; border-width: 2px; box-shadow: 0 3px 8px rgba(47, 48, 58, 0.15); }
+    .landmark-badge.vancouver { background: #ffede6; border-color: #f5c7b5; color: #915146; }
+    .landmark-badge.richmond { background: #fff4db; border-color: #efd596; color: #82602b; }
+    .landmark-badge.burnaby { background: #f0edff; border-color: #d7cef2; color: #5f568e; }
+    .landmark-badge.ubc { background: #e5f5ef; border-color: #b9dfd2; color: #397563; }
+    .landmark-badge.airport { background: #e9f1fd; border-color: #bfd2ed; color: #476488; }
+    .landmark-badge.local { padding: 4px 8px; font-size: 12px; background: rgba(255,255,255,.94); border-color: #e8d7c6; }
+    .map-hint-pill { display: flex; align-items: center; gap: 9px; font-size: 12px; border-style: solid; background: rgba(255, 255, 255, 0.96); }
+    .map-legend-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .map-legend-dot { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+    .map-legend-dot.food { background: var(--pin-food); }
+    .map-legend-dot.drink { background: var(--pin-drink); }
+    .map-legend-dot.fun { background: var(--pin-fun); }
+    .map-legend-dot.life { background: var(--pin-life); }
+    .empty-state {
+      padding: 24px 20px;
+      margin: 12px;
+      border: 1px dashed #d7c6b5;
+      border-radius: 16px;
+      background: #fffaf4;
+      color: var(--ink-soft);
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .empty-state[hidden] { display: none; }
+    .empty-state button { margin-top: 12px; padding: 8px 12px; border-radius: 999px; background: var(--cssa-red); color: #fff; font-size: 13px; font-weight: 700; }
+    :where(button, input, [tabindex="0"]):focus-visible { outline: 3px solid rgba(41, 113, 178, 0.65); outline-offset: 2px; }
+
+    @media (max-width: 860px) {
+      body { height: 100dvh; overflow: hidden; }
+      .page { height: 100dvh; padding: max(8px, env(safe-area-inset-top)) 8px env(safe-area-inset-bottom); gap: 8px; }
+      .site-header { min-height: 60px; padding: 7px 10px; gap: 8px; flex-shrink: 0; }
+      .brand-wrap { min-width: 0; flex: 1 1 auto; gap: 8px; }
+      .seal-badge { width: 34px; height: 34px; flex: 0 0 34px; font-size: 15px; }
+      .brand-info { min-width: 0; }
+      .brand-info h1 { gap: 3px; white-space: nowrap; font-size: clamp(12px, 3.6vw, 15px); }
+      .brand-title-desktop, .brand-flower { display: none !important; }
+      .brand-title-mobile { display: inline !important; }
+      .brand-info .tagline { gap: 0; margin-top: 2px; white-space: nowrap; font-size: 10px; }
+      .brand-info .tagline > span:first-child { display: none; }
+      .brand-info .tagline span.pill { padding: 2px 6px; font-size: 9px; }
+      .header-actions { flex: 0 0 auto; gap: 6px; }
+      .header-btn { width: 42px; height: 42px; padding: 0; justify-content: center; font-size: 15px; }
+      .app-main { height: auto; min-height: 0; flex: 1 1 auto; overflow: hidden; }
+      .search-bar { min-height: 44px; }
+      .chip-scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+      .chip-scroll::-webkit-scrollbar { display: none; }
+      .filter-chip { flex: 0 0 auto; white-space: nowrap; }
+      .sidebar { max-height: calc(100% - 12px); height: min(84dvh, calc(100% - 12px)); transform: translateY(calc(100% - 124px)); }
+      .partner-scroll { padding: 8px 12px 72px; }
+      .detail-card { width: auto; max-height: min(54dvh, 440px); bottom: max(84px, env(safe-area-inset-bottom)); }
+      .map-hint-pill { display: none; }
+      .area-quick-bar { max-width: calc(100% - 64px); overflow-x: auto; }
+      .quick-jump-btn { min-height: 42px; flex: 0 0 auto; white-space: nowrap; font-size: 12px; padding: 7px 10px; }
+      .ctrl-btn { width: 44px; height: 44px; font-size: 18px; }
+      .filter-chip { min-height: 40px; }
+    }
+
+    @media (max-width: 360px) {
+      .site-header { padding: 6px 8px; gap: 6px; }
+      .brand-wrap { gap: 6px; }
+      .brand-info h1 { font-size: 12px; }
+      .header-actions { gap: 4px; }
+      .header-btn { width: 40px; height: 40px; }
+      .sidebar-header { padding-right: 10px; padding-left: 10px; }
+      .filter-section { padding-right: 10px; padding-left: 10px; }
+      .filter-chip { padding-right: 8px; padding-left: 8px; font-size: 11px; }
+      .close-card-btn { right: -1px; }
+      .list-meta { gap: 6px; padding-right: 10px; padding-left: 10px; font-size: 11px; }
+      .list-meta > span:last-child { font-size: 9px !important; }
+      .partner-scroll { padding-right: 9px; padding-left: 9px; }
+      .partner-card { padding-right: 9px; padding-left: 9px; column-gap: 8px; }
+      .card-perk { font-size: 11px; }
+    }
+
+    @media (min-width: 861px) and (max-width: 1200px) {
+      .area-quick-bar {
+        left: 12px;
+        max-width: calc(100% - 76px);
+        flex-wrap: nowrap;
+        gap: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .area-quick-bar::-webkit-scrollbar { display: none; }
+      .quick-title { display: none; }
+      .quick-jump-btn { flex: 0 0 auto; white-space: nowrap; padding: 7px 9px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="brand-wrap">
+        <div class="seal-badge" aria-hidden="true">联</div>
+        <div class="brand-info">
+          <h1>UBC CSSA <span class="brand-title-desktop">会员专属地图</span><span class="brand-title-mobile">福利地图</span><span class="brand-flower" aria-hidden="true">✿</span></h1>
+          <div class="tagline">
+            <span>大温真实探索指南 · 手账手绘风格</span>
+            <span class="pill">2026-2027 专属权益</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" id="btnHowToCard" type="button">
+          <span>💳</span><span class="btn-text">会员卡说明</span>
+        </button>
+        <button class="header-btn primary" id="btnSuggest" type="button">
+          <span>✎</span><span class="btn-text">推荐合作店</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <section class="app-main">
+      <!-- Sidebar / Mobile Bottom Sheet -->
+      <aside class="sidebar" id="sidebarSheet" aria-label="合作商家与筛选">
+        <!-- Mobile Drawer Drag Handle -->
+        <div class="drawer-handle-bar" id="drawerHandle">
+          <div class="drawer-pill"></div>
+          <div class="drawer-status-hint" id="drawerToggleText">
+            <span>▲ 点击或上滑展开商家列表</span>
+          </div>
+        </div>
+
+        <div class="sidebar-header">
+          <label class="search-bar">
+            <span style="color:var(--cssa-red);font-size:15px;" aria-hidden="true">⌕</span>
+            <input type="search" id="searchInput" placeholder="搜店名、英文名、区域、类型或优惠…" aria-label="搜索店名、英文名、区域、类型或优惠">
+          </label>
+        </div>
+
+        <!-- Filter 1: Categories -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <span>按类型筛选</span>
+            <span style="font-size:9px;color:var(--cssa-red);" id="activeCategoryHint">全部类型</span>
+          </div>
+          <div class="chip-scroll" role="group" aria-label="分类筛选">
+            <button class="filter-chip" type="button" data-cat="all" aria-pressed="true">✨ 全部</button>
+            <button class="filter-chip" type="button" data-cat="food" aria-pressed="false">🍜 美食正餐</button>
+            <button class="filter-chip" type="button" data-cat="drink" aria-pressed="false">🧋 奶茶甜点</button>
+            <button class="filter-chip" type="button" data-cat="fun" aria-pressed="false">🎟️ 玩乐KTV</button>
+            <button class="filter-chip" type="button" data-cat="life" aria-pressed="false">🛍️ 生活日常</button>
+          </div>
+        </div>
+
+        <!-- Filter 2: Areas -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <span>按大温商圈</span>
+            <span style="font-size:9px;">真实街区</span>
+          </div>
+          <div class="chip-scroll" role="group" aria-label="区域筛选">
+            <button class="filter-chip" type="button" data-area="all" aria-pressed="true">所有店铺</button>
+            <button class="filter-chip" type="button" data-area="ubc" aria-pressed="false">🌲 UBC 校区</button>
+            <button class="filter-chip" type="button" data-area="vancouver" aria-pressed="false">🌆 Vancouver</button>
+            <button class="filter-chip" type="button" data-area="richmond" aria-pressed="false">🥟 Richmond</button>
+            <button class="filter-chip" type="button" data-area="burnaby" aria-pressed="false">🛍️ Burnaby</button>
+            <button class="filter-chip" type="button" data-area="outer" aria-pressed="false">🗺️ 其他大温</button>
+          </div>
+        </div>
+
+        <!-- Result Stats -->
+        <div class="list-meta">
+          <span>共找到 <strong id="partnerCount">0</strong> 家 CSSA 合作小店</span>
+          <span style="font-size:10px;">含线上配送商家</span>
+        </div>
+
+        <!-- Scrollable Cards -->
+        <div class="partner-scroll" id="partnerList" role="list"></div>
+      </aside>
+
+      <!-- Map Stage with Leaflet Real Metro Vancouver Map -->
+      <div class="map-stage" id="mapStage" aria-label="大温真实地图画布">
+        <!-- Real Leaflet Map Container -->
+        <div id="leafletMap"></div>
+        <div class="map-paper-overlay"></div>
+
+        <!-- Quick Area Jump Pills -->
+        <div class="area-quick-bar">
+          <div class="quick-title"><span>✦</span> 飞向区域</div>
+          <button class="quick-jump-btn" type="button" data-jump="core">✦ 核心商圈</button>
+          <button class="quick-jump-btn ubc-pill" type="button" data-jump="ubc">🌲 UBC 本部</button>
+          <button class="quick-jump-btn" type="button" data-jump="vancouver">🌆 温哥华</button>
+          <button class="quick-jump-btn" type="button" data-jump="richmond">🥟 列治文</button>
+          <button class="quick-jump-btn" type="button" data-jump="burnaby">🛍️ 本拿比</button>
+          <button class="quick-jump-btn" type="button" data-jump="outer">🗺️ 其他大温</button>
+          <button class="quick-jump-btn" type="button" data-jump="all">🌐 全部店铺</button>
+        </div>
+
+        <!-- Map Controls -->
+        <div class="map-controls">
+          <button class="ctrl-btn" id="btnZoomIn" type="button" aria-label="放大地图">+</button>
+          <button class="ctrl-btn" id="btnZoomOut" type="button" aria-label="缩小地图">−</button>
+          <button class="ctrl-btn" id="btnResetView" type="button" aria-label="复位地图" title="复位视角">⟲</button>
+        </div>
+
+        <!-- Floating Detail Card (Desktop & Mobile) -->
+        <section class="detail-card" id="detailCard" aria-live="polite" aria-label="商家福利详情">
+          <button class="close-card-btn" id="btnCloseDetail" type="button" aria-label="关闭详情">×</button>
+          <div class="card-top">
+            <div class="detail-large-icon" id="cardIcon">🍜</div>
+            <div class="detail-title-wrap">
+              <div class="detail-eyebrow">UBC CSSA MEMBER PERK</div>
+              <div class="detail-name" id="cardName">商家店名</div>
+              <div class="detail-location-str" id="cardArea">📍 Vancouver</div>
+            </div>
+          </div>
+
+          <div class="detail-perk-box">
+            <div>
+              <div class="perk-box-title">CSSA 会员专属折扣</div>
+              <div class="perk-box-sub">到店出示会员卡即享</div>
+            </div>
+            <div class="perk-box-value" id="cardPerk">88 折</div>
+          </div>
+
+          <div class="detail-tags" id="cardTags"></div>
+          <p class="detail-desc" id="cardDesc">商家介绍说明文本...</p>
+
+          <div class="detail-actions-row">
+            <button class="detail-btn sub" id="btnNavMaps" type="button">📍 导航路线</button>
+            <button class="detail-btn main" id="btnHowToUse" type="button">✨ 使用说明</button>
+          </div>
+        </section>
+
+        <!-- Bottom Left Hint Pill -->
+        <div class="map-hint-pill">
+          <span>🖍️ 店铺分类</span>
+          <span class="map-legend-item"><i class="map-legend-dot food"></i>美食</span>
+          <span class="map-legend-item"><i class="map-legend-dot drink"></i>饮品</span>
+          <span class="map-legend-item"><i class="map-legend-dot fun"></i>玩乐</span>
+          <span class="map-legend-item"><i class="map-legend-dot life"></i>生活</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Global Toast -->
+  <div class="app-toast" id="appToast" role="status" aria-live="polite">提示信息</div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    /**
+     * UBC CSSA Greater Vancouver Partner Map
+     * Powered by Leaflet GIS + Warm Paper/Watercolor Aesthetic
+     */
+
+    // 1. Partner Data Structure with REAL Metro Vancouver GPS Coordinates (Latitude, Longitude)
+    const partners = [
+    {
+        "id": "partner_1",
+        "name": "海底捞（Broadway）",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "food",
+        "icon": "🍲",
+        "perk": "周一至周五（节假日除外）菜品 20% off",
+        "shortPerk": "周一至周五（节假日除外）菜品 …",
+        "tags": [
+            "Vancouver",
+            "超值折扣"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：周一至周五（节假日除外）菜品 20% off。地址：3204 W Broadway, Vancouver, BC V6K 2H4。",
+        "address": "3204 W Broadway, Vancouver, BC V6K 2H4",
+        "lat": 49.26398,
+        "lng": -123.1762
+    },
+    {
+        "id": "partner_2",
+        "name": "Rumble Boxing Richmond",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "fun",
+        "icon": "🥊",
+        "perk": "20% off",
+        "shortPerk": "20% off",
+        "tags": [
+            "Richmond",
+            "超值折扣"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：20% off。地址：105-5766 Gilbert Rd, Richmond, BC V7C 0G1。",
+        "address": "105-5766 Gilbert Rd, Richmond, BC V7C 0G1",
+        "lat": 49.17211,
+        "lng": -123.14647
+    },
+    {
+        "id": "partner_3",
+        "name": "From 1% Skin Lab",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "life",
+        "icon": "✨",
+        "perk": "护肤品 20% off；脱毛 50% off；秋季皮肤管理：$150 体验价，$200 两次；一个指定项目 15% off；两个指定项目 20% off",
+        "shortPerk": "护肤品 20% off",
+        "tags": [
+            "Vancouver",
+            "超值折扣"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：护肤品 20% off；脱毛 50% off；秋季皮肤管理：$150 体验价，$200 两次；一个指定项目 15% off；两个指定项目 20% off。地址：2828 Granville St, Vancouver, BC V6H 3J5。",
+        "address": "2828 Granville St, Vancouver, BC V6H 3J5",
+        "lat": 49.25958,
+        "lng": -123.13872
+    },
+    {
+        "id": "partner_4",
+        "name": "Share Tea",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：1020 Mainland St Unit 30, Vancouver, BC V6B 2T5。",
+        "address": "1020 Mainland St Unit 30, Vancouver, BC V6B 2T5",
+        "lat": 49.2761,
+        "lng": -123.11928
+    },
+    {
+        "id": "partner_5",
+        "name": "Share Tea",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：3619 Kingsway, Vancouver, BC V5R 5M1。",
+        "address": "3619 Kingsway, Vancouver, BC V5R 5M1",
+        "lat": 49.2312,
+        "lng": -123.0278
+    },
+    {
+        "id": "partner_6",
+        "name": "Share Tea",
+        "area": "ubc",
+        "areaLabel": "UBC Campus",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "UBC Campus",
+            "校区直达"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：3348 Wesbrook Mall, Vancouver, BC V6S 0A8。",
+        "address": "3348 Wesbrook Mall, Vancouver, BC V6S 0A8",
+        "lat": 49.25449,
+        "lng": -123.23503
+    },
+    {
+        "id": "partner_7",
+        "name": "Share Tea",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：1673 Renfrew St, Vancouver, BC V5K 4E1。",
+        "address": "1673 Renfrew St, Vancouver, BC V5K 4E1",
+        "lat": 49.2698,
+        "lng": -123.0441
+    },
+    {
+        "id": "partner_8",
+        "name": "Share Tea",
+        "area": "langley",
+        "areaLabel": "Langley",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Langley"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：19705 Fraser Hwy Unit 134A, Langley, BC V3A 7E9。",
+        "address": "19705 Fraser Hwy Unit 134A, Langley, BC V3A 7E9",
+        "lat": 49.1068,
+        "lng": -122.6738
+    },
+    {
+        "id": "partner_9",
+        "name": "Share Tea",
+        "area": "surrey",
+        "areaLabel": "Surrey",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Surrey"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：9965 152 St Unit 4B, Surrey, BC V3R 4G5。",
+        "address": "9965 152 St Unit 4B, Surrey, BC V3R 4G5",
+        "lat": 49.1834,
+        "lng": -122.8005
+    },
+    {
+        "id": "partner_10",
+        "name": "Share Tea",
+        "area": "coquitlam",
+        "areaLabel": "Coquitlam",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Coquitlam"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：435 North Rd, Coquitlam, BC V3K 3V9。",
+        "address": "435 North Rd, Coquitlam, BC V3K 3V9",
+        "lat": 49.2486,
+        "lng": -122.8938
+    },
+    {
+        "id": "partner_11",
+        "name": "HAKUMORI",
+        "area": "burnaby",
+        "areaLabel": "Burnaby",
+        "category": "life",
+        "icon": "🥗",
+        "perk": "官网所有商品使用折扣码 UBCCSSA，享 15% off",
+        "shortPerk": "官网所有商品使用折扣码 UBC…",
+        "tags": [
+            "Burnaby"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：官网所有商品使用折扣码 UBCCSSA，享 15% off。地址：5154 Still Creek Ave, Burnaby, BC V5C 4E4。",
+        "address": "5154 Still Creek Ave, Burnaby, BC V5C 4E4",
+        "lat": 49.2604,
+        "lng": -122.9984
+    },
+    {
+        "id": "partner_12",
+        "name": "春芳号 Chun Fun How",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：1067 W Broadway, Vancouver, BC。",
+        "address": "1067 W Broadway, Vancouver, BC",
+        "lat": 49.26376,
+        "lng": -123.1284
+    },
+    {
+        "id": "partner_13",
+        "name": "春芳号 Chun Fun How",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Richmond"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：#105-4751 Garden City Rd, Richmond, BC。",
+        "address": "#105-4751 Garden City Rd, Richmond, BC",
+        "lat": 49.17789,
+        "lng": -123.12549
+    },
+    {
+        "id": "partner_14",
+        "name": "First Bite Tart & Cake",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "drink",
+        "icon": "🍰",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Richmond"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：153-5951 Minoru Blvd, Richmond, BC。",
+        "address": "153-5951 Minoru Blvd, Richmond, BC",
+        "lat": 49.17108,
+        "lng": -123.14045
+    },
+    {
+        "id": "partner_15",
+        "name": "Tokyo in April",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "food",
+        "icon": "🍣",
+        "perk": "4 人及以上用餐 10% off",
+        "shortPerk": "4 人及以上用餐 10% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：4 人及以上用餐 10% off。地址：526 Abbott St / International Village Mall, 88 W Pender St Unit 1103, Vancouver, BC V6B 6N7。",
+        "address": "526 Abbott St / International Village Mall, 88 W Pender St Unit 1103, Vancouver, BC V6B 6N7",
+        "lat": 49.28028,
+        "lng": -123.1067
+    },
+    {
+        "id": "partner_16",
+        "name": "Slothfuls",
+        "area": "burnaby",
+        "areaLabel": "Burnaby",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Burnaby"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：5242 Kingsway, Burnaby, BC。",
+        "address": "5242 Kingsway, Burnaby, BC",
+        "lat": 49.2258,
+        "lng": -122.984
+    },
+    {
+        "id": "partner_17",
+        "name": "黑牛家（Hot Spot Buffet）",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "food",
+        "icon": "🍲",
+        "perk": "饮料 10% off",
+        "shortPerk": "饮料 10% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：饮料 10% off。地址：240-3340 Kingsway, Vancouver, BC V5R 5L1。",
+        "address": "240-3340 Kingsway, Vancouver, BC V5R 5L1",
+        "lat": 49.23318,
+        "lng": -123.03444
+    },
+    {
+        "id": "partner_18",
+        "name": "MYST 觅食",
+        "area": "burnaby",
+        "areaLabel": "Burnaby",
+        "category": "food",
+        "icon": "🍜",
+        "perk": "10% off all in-store purchases; 15% off event food orders of 50+ meals; 20% off event food orders of 100+ meals",
+        "shortPerk": "10% off in-store purchases",
+        "tags": [
+            "Burnaby",
+            "超值折扣"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：店内消费 10% off；50 份及以上活动餐食 15% off；100 份及以上活动餐食 20% off。地址：6400 Kingsway, Burnaby, BC V5E 1C5。",
+        "address": "6400 Kingsway, Burnaby, BC V5E 1C5",
+        "lat": 49.21935,
+        "lng": -122.97069
+    },
+    {
+        "id": "partner_19",
+        "name": "MYST 觅食",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "food",
+        "icon": "🍜",
+        "perk": "10% off all in-store purchases; 15% off event food orders of 50+ meals; 20% off event food orders of 100+ meals",
+        "shortPerk": "10% off in-store purchases",
+        "tags": [
+            "Vancouver",
+            "超值折扣"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：店内消费 10% off；50 份及以上活动餐食 15% off；100 份及以上活动餐食 20% off。地址：2028 W 41st Ave, Vancouver, BC V6M 1Y8。",
+        "address": "2028 W 41st Ave, Vancouver, BC V6M 1Y8",
+        "lat": 49.2355,
+        "lng": -123.153
+    },
+    {
+        "id": "partner_20",
+        "name": "MYST 觅食",
+        "area": "langley",
+        "areaLabel": "Langley",
+        "category": "food",
+        "icon": "🍜",
+        "perk": "10% off all in-store purchases; 15% off event food orders of 50+ meals; 20% off event food orders of 100+ meals",
+        "shortPerk": "10% off in-store purchases",
+        "tags": [
+            "Langley",
+            "超值折扣"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：店内消费 10% off；50 份及以上活动餐食 15% off；100 份及以上活动餐食 20% off。地址：6225 200 St, Langley, BC。",
+        "address": "6225 200 St, Langley, BC",
+        "lat": 49.1158,
+        "lng": -122.657
+    },
+    {
+        "id": "partner_21",
+        "name": "添璽（The North Bistro）",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "food",
+        "icon": "🍜",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Richmond",
+            "天车/商圈"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：4540 No. 3 Rd Unit 1200, Richmond, BC V6X 3V7。",
+        "address": "4540 No. 3 Rd Unit 1200, Richmond, BC V6X 3V7",
+        "lat": 49.1816,
+        "lng": -123.1365
+    },
+    {
+        "id": "partner_22",
+        "name": "柠记·手打柠檬茶",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Richmond",
+            "天车/商圈"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：4260 No. 3 Rd, Richmond, BC V6X 2C2。",
+        "address": "4260 No. 3 Rd, Richmond, BC V6X 2C2",
+        "lat": 49.1834,
+        "lng": -123.1366
+    },
+    {
+        "id": "partner_23",
+        "name": "Wren Cafe",
+        "area": "vancouver",
+        "areaLabel": "Vancouver",
+        "category": "drink",
+        "icon": "🍰",
+        "perk": "15% off",
+        "shortPerk": "15% off",
+        "tags": [
+            "Vancouver"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：15% off。地址：280 Nelson St, Vancouver, BC V6B 2E2。",
+        "address": "280 Nelson St, Vancouver, BC V6B 2E2",
+        "lat": 49.277,
+        "lng": -123.1185
+    },
+    {
+        "id": "partner_24",
+        "name": "豆捞坊列治文店",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "food",
+        "icon": "🍲",
+        "perk": "非 Happy Hour 时段单点菜品 20% off；Happy Hour 时段单点菜品 30% off",
+        "shortPerk": "非 Happy Hour 时段…",
+        "tags": [
+            "Richmond",
+            "超值折扣",
+            "天车/商圈"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：非 Happy Hour 时段单点菜品 20% off；Happy Hour 时段单点菜品 30% off。地址：#720-5300 No. 3 Rd, Richmond, BC V6X 2X9。",
+        "address": "#720-5300 No. 3 Rd, Richmond, BC V6X 2X9",
+        "lat": 49.1755,
+        "lng": -123.1362
+    },
+    {
+        "id": "partner_25",
+        "name": "duoduo 酸奶碗",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "drink",
+        "icon": "🍰",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Richmond"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：#130-7971 Alderbridge Way, Richmond, BC V6X 2A4。",
+        "address": "#130-7971 Alderbridge Way, Richmond, BC V6X 2A4",
+        "lat": 49.17783,
+        "lng": -123.13835
+    },
+    {
+        "id": "partner_26",
+        "name": "duoduo 酸奶碗",
+        "area": "burnaby",
+        "areaLabel": "Burnaby",
+        "category": "drink",
+        "icon": "🍰",
+        "perk": "10% off",
+        "shortPerk": "10% off",
+        "tags": [
+            "Burnaby"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：10% off。地址：5318 Grimmer St, Burnaby, BC。",
+        "address": "5318 Grimmer St, Burnaby, BC",
+        "lat": 49.2238,
+        "lng": -122.988
+    },
+    {
+        "id": "partner_27",
+        "name": "YOYO 低卡工厂 FitBox",
+        "area": "online",
+        "areaLabel": "大温配送",
+        "category": "life",
+        "icon": "🥗",
+        "perk": "15% off",
+        "shortPerk": "15% off",
+        "tags": [
+            "大温配送",
+            "线上订餐"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：15% off。地址：线上订餐；大温配送（无公开实体店地址）。",
+        "address": "线上订餐；大温配送（无公开实体店地址）",
+        "onlineOnly": true
+    },
+    {
+        "id": "partner_28",
+        "name": "Deco Nova K歌之王",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "fun",
+        "icon": "🎤",
+        "perk": "15% off",
+        "shortPerk": "15% off",
+        "tags": [
+            "Richmond",
+            "天车/商圈"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：15% off。地址：4000 No. 3 Rd Unit 3300, Richmond, BC V6X 0J1。",
+        "address": "4000 No. 3 Rd Unit 3300, Richmond, BC V6X 0J1",
+        "lat": 49.1855,
+        "lng": -123.1366
+    },
+    {
+        "id": "partner_29",
+        "name": "V+Club / V+ Karaoke",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "fun",
+        "icon": "🎤",
+        "perk": "V+Club 10% off；KTV 房费 15% off",
+        "shortPerk": "V+Club 10% off",
+        "tags": [
+            "Richmond"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：V+Club 10% off；KTV 房费 15% off。地址：140-8171 Ackroyd Rd, Richmond, BC V6X 3K1。",
+        "address": "140-8171 Ackroyd Rd, Richmond, BC V6X 3K1",
+        "lat": 49.17276,
+        "lng": -123.13518
+    },
+    {
+        "id": "partner_30",
+        "name": "桃花坞 Lovin Tea",
+        "area": "richmond",
+        "areaLabel": "Richmond",
+        "category": "drink",
+        "icon": "🧋",
+        "perk": "麻将 $20/人，全天任打；另享 10% off",
+        "shortPerk": "麻将 $20/人",
+        "tags": [
+            "Richmond"
+        ],
+        "desc": "UBC CSSA 官方合作商家。凭会员卡享：麻将 $20/人，全天任打；另享 10% off。地址：2040 Hazelbridge Way, Richmond, BC V6X 1E4。",
+        "address": "2040 Hazelbridge Way, Richmond, BC V6X 1E4",
+        "lat": 49.1848,
+        "lng": -123.1332
+    }
+];
+
+    // Show only the larger English place names at overview zoom; local hubs appear after zooming in.
+    const landmarks = [
+      { name: "Vancouver", lat: 49.2900, lng: -123.1390, level: "major", tone: "vancouver" },
+      { name: "Richmond", lat: 49.1665, lng: -123.1510, level: "major", tone: "richmond" },
+      { name: "Burnaby", lat: 49.2390, lng: -123.0160, level: "major", tone: "burnaby" },
+      { name: "UBC", lat: 49.2680, lng: -123.2550, level: "major", tone: "ubc" },
+      { name: "YVR Airport", lat: 49.2040, lng: -123.1710, level: "major", tone: "airport" },
+      { name: "Surrey", lat: 49.1825, lng: -122.8460, level: "major", tone: "richmond" },
+      { name: "Coquitlam", lat: 49.2830, lng: -122.7930, level: "major", tone: "burnaby" },
+      { name: "Langley", lat: 49.1040, lng: -122.6600, level: "major", tone: "vancouver" },
+      { name: "Broadway", lat: 49.2640, lng: -123.1760, level: "local", tone: "vancouver" },
+      { name: "Downtown", lat: 49.2840, lng: -123.1200, level: "local", tone: "vancouver" },
+      { name: "Alexandra Rd", lat: 49.1795, lng: -123.1280, level: "local", tone: "richmond" },
+      { name: "Metrotown", lat: 49.2250, lng: -123.0030, level: "local", tone: "burnaby" },
+      { name: "Richmond Centre", lat: 49.1660, lng: -123.1360, level: "local", tone: "richmond" }
+    ];
+
+    // 2. Application State
+    const state = {
+      category: "all",
+      area: "all",
+      query: "",
+      selectedId: null
+    };
+
+    // DOM Elements
+    const partnerList = document.getElementById("partnerList");
+    const partnerCount = document.getElementById("partnerCount");
+    const searchInput = document.getElementById("searchInput");
+    const detailCard = document.getElementById("detailCard");
+    const sidebarSheet = document.getElementById("sidebarSheet");
+    const drawerHandle = document.getElementById("drawerHandle");
+    const drawerToggleText = document.getElementById("drawerToggleText");
+    const appToast = document.getElementById("appToast");
+    let toastTimer = null;
+
+    // 3. Initialize Leaflet Real Map
+    const map = L.map("leafletMap", {
+      center: [49.2350, -123.1250],
+      zoom: 11,
+      minZoom: 10,
+      maxZoom: 18,
+      zoomControl: false,
+      attributionControl: true
+    });
+
+    // Keep roads and terrain colors while drawing only our curated place labels on top.
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+      attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, &copy; OpenStreetMap contributors, and the GIS user community',
+      maxZoom: 19
+    }).addTo(map);
+
+    const coreBounds = L.latLngBounds([[49.158, -123.265], [49.300, -122.958]]);
+    const outerAreaIds = new Set(["langley", "surrey", "coquitlam"]);
+    const outerBounds = L.latLngBounds(partners.filter(p => outerAreaIds.has(p.area) && p.lat && p.lng).map(p => [p.lat, p.lng]));
+    const allStoreBounds = L.latLngBounds(partners.filter(p => p.lat && p.lng).map(p => [p.lat, p.lng]));
+
+    // Store markers, pastel district accents, and curated place labels.
+    const markerGroup = L.layerGroup().addTo(map);
+    const districtGroup = L.layerGroup().addTo(map);
+    const landmarkGroup = L.layerGroup().addTo(map);
+    let markerInstances = {};
+
+    const districtGlows = [
+      { lat: 49.2815, lng: -123.1250, radius: 3300, color: "#ed8b79" },
+      { lat: 49.1790, lng: -123.1350, radius: 3000, color: "#e7b74e" },
+      { lat: 49.2280, lng: -123.0030, radius: 2700, color: "#927ddb" },
+      { lat: 49.2606, lng: -123.2460, radius: 2500, color: "#51aa9b" }
+    ];
+    districtGlows.forEach(area => L.circle([area.lat, area.lng], {
+      radius: area.radius,
+      color: area.color,
+      weight: 2,
+      opacity: 0.5,
+      dashArray: "5 8",
+      fillColor: area.color,
+      fillOpacity: 0.28,
+      interactive: false
+    }).addTo(districtGroup));
+
+    function renderLandmarks() {
+      landmarkGroup.clearLayers();
+      const zoom = map.getZoom();
+      const visibleBounds = map.getBounds().pad(0.08);
+      const level = zoom < 13.5 ? "major" : "local";
+      const coreNames = new Set(["Vancouver", "Richmond", "Burnaby", "UBC", "YVR Airport"]);
+      const isCoreView = coreBounds.contains(map.getCenter());
+      landmarks.filter(lm => lm.level === level && (level !== "major" || !isCoreView || coreNames.has(lm.name)) && visibleBounds.contains([lm.lat, lm.lng])).forEach(lm => {
+        const icon = L.divIcon({
+          className: "custom-leaflet-marker",
+          html: `<div class="landmark-badge ${lm.level} ${lm.tone}">${lm.name}</div>`,
+          iconSize: [0, 0]
+        });
+        L.marker([lm.lat, lm.lng], { icon, interactive: false, zIndexOffset: 1200 }).addTo(landmarkGroup);
+      });
+    }
+
+    // 5. Create Sticker Icon for a Partner
+    function createStickerIcon(partner, isActive, showLabel) {
+      return L.divIcon({
+        className: "custom-leaflet-marker",
+        html: `
+          <div class="merchant-sticker-pin category-${partner.category} ${isActive ? "active" : ""} ${showLabel ? "show-label" : ""}" data-id="${partner.id}">
+            <div class="pin-sparkle">✦</div>
+            <div class="pin-bubble">
+              <div class="pin-icon">${partner.icon}</div>
+            </div>
+            <div class="pin-tail"></div>
+            <div class="pin-caption">${partner.name}</div>
+          </div>
+        `,
+        iconSize: [0, 0]
+      });
+    }
+
+    function createClusterIcon(group) {
+      const categoryCounts = group.reduce((counts, p) => {
+        counts[p.category] = (counts[p.category] || 0) + 1;
+        return counts;
+      }, {});
+      const dominantCategory = Object.keys(categoryCounts).sort((a, b) => categoryCounts[b] - categoryCounts[a])[0];
+      const colors = { food: "#e87864", drink: "#4ba99b", fun: "#8a76d5", life: "#d49a36" };
+      const icon = L.divIcon({
+        className: "custom-leaflet-marker",
+        html: `<div class="merchant-cluster" style="--cluster-color:${colors[dominantCategory] || "#d8262c"}" aria-label="${group.length} 家店"><span>${group.length}</span></div>`,
+        iconSize: [44, 48],
+        iconAnchor: [22, 38]
+      });
+      const center = L.latLng(
+        group.reduce((sum, p) => sum + p.lat, 0) / group.length,
+        group.reduce((sum, p) => sum + p.lng, 0) / group.length
+      );
+      const marker = L.marker(center, { icon, title: `${group.length} 家合作店` });
+      marker.on("click", (e) => {
+        L.DomEvent.stopPropagation(e);
+        const bounds = L.latLngBounds(group.map(p => [p.lat, p.lng]));
+        if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+          map.flyTo(center, Math.min(17, map.getZoom() + 2), { duration: 0.65 });
+        } else {
+          map.flyToBounds(bounds, { padding: [64, 64], maxZoom: 16, duration: 0.65 });
+        }
+      });
+      marker.addTo(markerGroup);
+    }
+
+    function renderMarkers(visible) {
+      markerGroup.clearLayers();
+      markerInstances = {};
+      const zoom = map.getZoom();
+      const mapBounds = map.getBounds().pad(0.12);
+      const nearby = visible.filter(p => p.lat && p.lng && mapBounds.contains([p.lat, p.lng]));
+      const groups = new Map();
+
+      nearby.forEach(p => {
+        const point = map.latLngToContainerPoint([p.lat, p.lng]);
+        const key = `${Math.floor(point.x / 54)}:${Math.floor(point.y / 54)}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(p);
+      });
+
+      groups.forEach(group => {
+        if (group.length > 1 && zoom < 15) {
+          createClusterIcon(group);
+          return;
+        }
+        group.forEach(p => {
+          const isSel = state.selectedId === p.id;
+          const marker = L.marker([p.lat, p.lng], {
+            icon: createStickerIcon(p, isSel, isSel || zoom >= 14),
+            title: `${p.name} · ${p.shortPerk || p.perk}`,
+            zIndexOffset: isSel ? 1000 : 0
+          });
+          marker.on("click", (e) => {
+            L.DomEvent.stopPropagation(e);
+            selectPartner(p.id, false);
+          });
+          marker.addTo(markerGroup);
+          markerInstances[p.id] = marker;
+        });
+      });
+    }
+
+    // 6. Filter & Search Logic
+    const searchAliasesById = {
+      partner_1: ["haidilao", "hai di lao", "hot pot", "火锅", "海底捞"],
+      partner_2: ["rumble", "boxing", "拳击", "健身"],
+      partner_3: ["from 1%", "from1%", "skin lab", "美容", "护肤", "脱毛", "皮肤管理"],
+      partner_4: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_5: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_6: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_7: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_8: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_9: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_10: ["share tea", "sharetea", "bubble tea", "boba", "奶茶", "茶饮"],
+      partner_11: ["hakumori", "haku mori", "ubccssa", "ubc cssa", "网店", "护肤"],
+      partner_12: ["春芳号", "春芳號", "chun fun how", "chunfunhow", "奶茶"],
+      partner_13: ["春芳号", "春芳號", "chun fun how", "chunfunhow", "奶茶"],
+      partner_14: ["first bite", "firstbite", "tart", "cake", "蛋挞", "甜点", "烘焙"],
+      partner_15: ["tokyo in april", "日料", "日本料理"],
+      partner_16: ["slothfuls", "甜品", "dessert"],
+      partner_17: ["hot spot buffet", "hotspot", "烧烤", "火锅"],
+      partner_18: ["myst", "觅食", "event food", "活动餐食", "团餐"],
+      partner_19: ["myst", "觅食", "event food", "活动餐食", "团餐"],
+      partner_20: ["myst", "觅食", "event food", "活动餐食", "团餐"],
+      partner_21: ["添玺", "the north bistro"],
+      partner_22: ["柠记", "柠檬茶", "lemon tea"],
+      partner_23: ["wren", "wren cafe", "咖啡"],
+      partner_24: ["豆捞坊", "hot pot", "火锅"],
+      partner_25: ["duoduo", "酸奶", "yogurt", "酸奶碗"],
+      partner_26: ["duoduo", "酸奶", "yogurt", "酸奶碗"],
+      partner_27: ["fitbox", "fit box", "低卡", "meal prep", "轻食", "大温配送"],
+      partner_28: ["deco nova", "deconova", "ktv", "karaoke", "k歌之王"],
+      partner_29: ["v+club", "v+ karaoke", "ktv", "karaoke", "卡拉ok"],
+      partner_30: ["lovin tea", "loving tea", "桃花坞", "麻将", "mahjong"]
+    };
+    const searchTermsByCategory = {
+      food: ["美食", "正餐", "餐厅", "restaurant", "dining", "火锅", "food"],
+      drink: ["饮品", "奶茶", "茶饮", "甜点", "饮料", "drink", "boba"],
+      fun: ["玩乐", "ktv", "卡拉ok", "娱乐", "fun"],
+      life: ["生活", "美容", "护肤", "健身", "life"]
+    };
+    const normalizeSearch = value => String(value || "").normalize("NFKC").toLowerCase().replace(/[.,/()·|_-]+/g, " ").trim();
+    const categoryLabel = { food: "美食", drink: "饮品", fun: "玩乐", life: "生活" };
+
+    function getVisiblePartners() {
+      const queryTokens = normalizeSearch(state.query).split(/\s+/).filter(Boolean);
+      return partners.filter(p => {
+        const matchCat = state.category === "all" || p.category === state.category;
+        const matchArea = state.area === "all" || p.area === state.area || (state.area === "outer" && outerAreaIds.has(p.area));
+        const searchable = normalizeSearch([
+          p.name, p.area, p.areaLabel, p.desc, p.perk, p.shortPerk, p.tags.join(" "), p.address,
+          searchAliasesById[p.id]?.join(" "), searchTermsByCategory[p.category]?.join(" ")
+        ].join(" "));
+        const matchQuery = !queryTokens.length || queryTokens.every(token => searchable.includes(token));
+        return matchCat && matchArea && matchQuery;
+      });
+    }
+
+    // 7. Render Function
+    function render() {
+      const visible = getVisiblePartners();
+      partnerCount.textContent = visible.length;
+
+      // Render Left/Drawer Scroll Cards
+      partnerList.innerHTML = visible.length ? visible.map(p => `
+        <article class="partner-card ${state.selectedId === p.id ? "active" : ""}" data-id="${p.id}" data-category="${p.category}" tabindex="0" role="button" aria-label="${p.name}，${p.perk}">
+          <div class="card-icon" aria-hidden="true">${p.icon}</div>
+          <div class="card-info">
+            <div class="name">${p.name}</div>
+            <div class="sub">
+              <span class="badge-area">${p.areaLabel.split("·")[0].trim()}</span>
+              <span>${p.onlineOnly ? "线上配送" : categoryLabel[p.category]}</span>
+            </div>
+          </div>
+          <div class="card-perk">${p.shortPerk || p.perk}</div>
+        </article>
+      `).join("") : `
+        <div class="empty-state" role="status">
+          <div>没有找到匹配的小店</div>
+          <button type="button" id="clearFiltersButton">清除搜索和筛选</button>
+        </div>`;
+
+      renderMarkers(visible);
+
+      // Bind Click Listeners for Sidebar Cards
+      document.querySelectorAll(".partner-card[data-id]").forEach(card => {
+        card.addEventListener("click", () => selectPartner(card.dataset.id, true));
+        card.addEventListener("keydown", e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            selectPartner(card.dataset.id, true);
+          }
+        });
+      });
+      document.getElementById("clearFiltersButton")?.addEventListener("click", clearFilters);
+    }
+
+    // 8. Select Partner & Open Detail Card
+    function selectPartner(id, fromList = false) {
+      const p = partners.find(item => item.id === id);
+      if (!p) return;
+
+      state.selectedId = id;
+
+      // Update Card UI
+      document.getElementById("cardIcon").textContent = p.icon;
+      document.getElementById("cardName").textContent = p.name;
+      document.getElementById("cardArea").textContent = p.onlineOnly
+        ? "🥗 大温配送 · 线上订餐（无实体店）"
+        : `📍 ${p.areaLabel} · ${p.address}`;
+      document.getElementById("cardPerk").textContent = p.perk.replace(/[；;]/g, "\n");
+      document.getElementById("cardDesc").textContent = p.onlineOnly
+        ? "提供大温地区线上订餐与配送服务。"
+        : "凭有效 UBC CSSA 会员卡享受以上优惠；具体使用条件以店家说明为准。";
+      document.getElementById("cardTags").innerHTML = p.tags.map(t => `<span class="tag-badge">#${t}</span>`).join("");
+
+      detailCard.classList.add("open");
+      render();
+
+      if (p.lat && p.lng) {
+        map.flyTo([p.lat, p.lng], 15, { duration: 0.8, easeLinearity: 0.25 });
+      }
+
+      // Mobile Bottom Sheet Handling
+      if (window.innerWidth <= 860) {
+        sidebarSheet.classList.remove("sheet-expanded");
+        sidebarSheet.classList.add("sheet-half");
+        updateDrawerText();
+      }
+    }
+
+    function closeDetail() {
+      state.selectedId = null;
+      detailCard.classList.remove("open");
+      render();
+    }
+
+    document.getElementById("btnCloseDetail").addEventListener("click", closeDetail);
+
+    // 9. Quick Area Jump Destinations with Real GPS
+    const jumpPresets = {
+      core: { bounds: coreBounds, maxZoom: 12.5 },
+      ubc: { center: [49.2630, -123.2460], zoom: 15 },
+      vancouver: { center: [49.2820, -123.1250], zoom: 14 },
+      richmond: { center: [49.1790, -123.1330], zoom: 14 },
+      burnaby: { center: [49.2290, -123.0030], zoom: 14 },
+      outer: { bounds: outerBounds, maxZoom: 11.6 },
+      all: { bounds: allStoreBounds, maxZoom: 10.8 }
+    };
+
+    document.querySelectorAll("[data-jump]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const dest = btn.dataset.jump;
+        if (jumpPresets[dest]) {
+          flyToPreset(dest);
+          showToast(`已飞向: ${btn.textContent.trim()}`);
+        }
+      });
+    });
+
+    function flyToPreset(dest) {
+      const preset = jumpPresets[dest];
+      if (!preset) return;
+      if (preset.bounds) {
+        map.flyToBounds(preset.bounds, { padding: [48, 48], maxZoom: preset.maxZoom, duration: 0.9 });
+      } else {
+        map.flyTo(preset.center, preset.zoom, { duration: 0.9 });
+      }
+    }
+
+    // Zoom Controls
+    document.getElementById("btnZoomIn").addEventListener("click", () => map.zoomIn());
+    document.getElementById("btnZoomOut").addEventListener("click", () => map.zoomOut());
+    document.getElementById("btnResetView").addEventListener("click", () => {
+      flyToPreset("core");
+      showToast("已回到温哥华、列治文、本拿比核心商圈 ✦");
+    });
+
+    // 10. Filter Chips Events
+    document.querySelectorAll("[data-cat]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.category = btn.dataset.cat;
+        document.querySelectorAll("[data-cat]").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+        document.getElementById("activeCategoryHint").textContent = btn.textContent.trim();
+        render();
+      });
+    });
+
+    document.querySelectorAll("[data-area]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.area = btn.dataset.area;
+        document.querySelectorAll("[data-area]").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+        render();
+        const preset = jumpPresets[state.area];
+        if (preset) flyToPreset(state.area);
+      });
+    });
+
+    // 11. Search Input
+    searchInput.addEventListener("input", (e) => {
+      state.query = e.target.value;
+      render();
+    });
+
+    function clearFilters() {
+      state.query = "";
+      state.category = "all";
+      state.area = "all";
+      searchInput.value = "";
+      document.querySelectorAll("[data-cat]").forEach(btn => btn.setAttribute("aria-pressed", String(btn.dataset.cat === "all")));
+      document.querySelectorAll("[data-area]").forEach(btn => btn.setAttribute("aria-pressed", String(btn.dataset.area === "all")));
+      document.getElementById("activeCategoryHint").textContent = "全部类型";
+      render();
+      flyToPreset("core");
+    }
+
+    map.on("moveend zoomend", () => {
+      renderMarkers(getVisiblePartners());
+      renderLandmarks();
+    });
+
+    // 12. Mobile Bottom Sheet Interactions
+    function updateDrawerText() {
+      if (sidebarSheet.classList.contains("sheet-expanded")) {
+        drawerToggleText.innerHTML = "<span>▼ 点击或下滑查看地图</span>";
+      } else {
+        drawerToggleText.innerHTML = "<span>▲ 点击或上滑展开商家列表</span>";
+      }
+    }
+
+    drawerHandle.addEventListener("click", () => {
+      if (sidebarSheet.classList.contains("sheet-expanded")) {
+        sidebarSheet.classList.remove("sheet-expanded");
+        sidebarSheet.classList.remove("sheet-half");
+      } else {
+        sidebarSheet.classList.add("sheet-expanded");
+        sidebarSheet.classList.remove("sheet-half");
+      }
+      updateDrawerText();
+    });
+
+    // 13. Toast & Dialogs
+    function showToast(msg) {
+      appToast.textContent = msg;
+      appToast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        appToast.classList.remove("show");
+      }, 2400);
+    }
+
+    document.getElementById("btnHowToCard").addEventListener("click", () => {
+      showToast("💳 UBC CSSA 会员可在微信公众号/小程序或迎新现场领取实体卡与电子码。");
+    });
+
+    document.getElementById("btnSuggest").addEventListener("click", () => {
+      showToast("✎ 欢迎私信 UBC CSSA 商务部推荐你最想打折的大温宝藏小店！");
+    });
+
+    document.getElementById("btnNavMaps").addEventListener("click", () => {
+      if (!state.selectedId) return;
+      const p = partners.find(item => item.id === state.selectedId);
+      if (p.onlineOnly || !p.lat || !p.lng) {
+        showToast("FitBox 提供大温配送，没有实体店导航地址。");
+        return;
+      }
+      showToast(`📍 正在调用 Google Maps 导航前往：${p.name}`);
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`, "_blank");
+    });
+
+    document.getElementById("btnHowToUse").addEventListener("click", () => {
+      showToast("✨ 到店点单结账前，向店员出示有效的 UBC CSSA 会员卡即可立享优惠！");
+    });
+
+    // Close on ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeDetail();
+    });
+
+    // Start on the Vancouver, Richmond, Burnaby, and UBC core; the full partner set stays searchable.
+    render();
+    map.fitBounds(coreBounds, { padding: [42, 42], maxZoom: 12.4 });
+    renderLandmarks();
+  </script>
+</body>
+</html>
